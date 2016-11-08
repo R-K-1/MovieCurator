@@ -1,5 +1,6 @@
 package com.example.ray.popularmovies;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,7 +13,23 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
+
+    ArrayList<Movie> arrayList;
+    GridView gridView   ;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,16 +47,84 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        GridView gridview = (GridView) findViewById(R.id.movies_Grid);
-        gridview.setAdapter(new ImageAdapter(this));
+        arrayList = new ArrayList<>();
 
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView = (GridView) findViewById(R.id.movies_Grid);
+        // commenting this out because I am setting adapter later
+        // gridview.setAdapter(new ImageAdapter(this));
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // enter the API URL here
+                new GetMoviesJSON().execute("");
+            }
+        });
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 Toast.makeText(MainActivity.this, "" + position,
                         Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    class GetMoviesJSON extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            return readURL(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String content) {
+            try {
+                JSONObject jsonObject = new JSONObject(content);
+                JSONArray jsonArray =  jsonObject.getJSONArray("results");
+
+                for(int i =0;i<jsonArray.length(); i++){
+                    JSONObject movieObject = jsonArray.getJSONObject(i);
+                    arrayList.add(new Movie(
+                            new BigDecimal(movieObject.getString("id")),
+                            movieObject.getString("title"),
+                            movieObject.getString("poster_path"),
+                            movieObject.getString("backdrop_path"),
+                            movieObject.getString("overview"),
+                            movieObject.getString("release_date"),
+                            new BigDecimal(movieObject.getString("popularity"))
+                    ));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            MoviesGridAdapter adapter = new MoviesGridAdapter(
+                    getApplicationContext(), R.layout.movies_list_item, arrayList
+            );
+            gridView.setAdapter(adapter);
+        }
+    }
+
+
+    private static String readURL(String theUrl) {
+        StringBuilder content = new StringBuilder();
+        try {
+            // create a url object
+            URL url = new URL(theUrl);
+            // create a urlconnection object
+            URLConnection urlConnection = url.openConnection();
+            // wrap the urlconnection in a bufferedreader
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            String line;
+            // read from the urlconnection via the bufferedreader
+            while ((line = bufferedReader.readLine()) != null) {
+                content.append(line + "\n");
+            }
+            bufferedReader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return content.toString();
     }
 
     @Override
