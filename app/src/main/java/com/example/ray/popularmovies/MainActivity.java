@@ -50,16 +50,14 @@ public class MainActivity extends AppCompatActivity {
         arrayList = new ArrayList<>();
 
         gridView = (GridView) findViewById(R.id.movies_Grid);
-        // commenting this out because I am setting adapter later
-        // gridview.setAdapter(new ImageAdapter(this));
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                // enter the API URL here
-                new GetMoviesJSON().execute("");
-            }
-        });
+        // runOnUiThread(new Runnable() {
+            // @Override
+            // public void run() {
+                // new ReadJSON().execute("http://quocnguyen.16mb.com/products.json");
+                new GetMoviesJSON().execute("https://api.themoviedb.org/3/discover/movie?api_key=" + BuildConfig.MOVIE_DB_API_KEY + "&sort_by=popularity.desc");
+            // }
+        // });
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
@@ -88,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                     arrayList.add(new Movie(
                             new BigDecimal(movieObject.getString("id")),
                             movieObject.getString("title"),
-                            movieObject.getString("poster_path"),
+                            new String("https://image.tmdb.org/t/p/w185" + movieObject.getString("poster_path")),
                             movieObject.getString("backdrop_path"),
                             movieObject.getString("overview"),
                             movieObject.getString("release_date"),
