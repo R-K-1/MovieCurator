@@ -44,20 +44,18 @@ public class MoviesGridAdapter extends BaseAdapter {
         if (convertView == null){
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
+            // imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
+            imageView.setLayoutParams(new GridView.LayoutParams(150, 180));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setPadding(8, 8, 8, 8);
+            // imageView.setPadding(8, 8, 8, 8);
+            imageView.setPadding(0, 0, 0, 0);
 
         } else {
             imageView = (ImageView) convertView;
         }
-
-        // I know the below will have to be refactored but as Kent Beck says get it to work, then
-        // get it right and then get it fast
-        Object[] movies = mMovies.toArray();
         // Commenting out line below momemtarily because I get out of bound index exception
         // Movie movie = (Movie) movies[position];
-        Movie movie = (Movie) movies[1];
+        Movie movie = mMovies.get(position);
 
         Picasso.with(mContext).load(movie.getPosterPath()).into(imageView);
 
