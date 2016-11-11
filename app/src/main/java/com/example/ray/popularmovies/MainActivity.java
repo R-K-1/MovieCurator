@@ -1,5 +1,6 @@
 package com.example.ray.popularmovies;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLConnection;
@@ -62,8 +63,11 @@ public class MainActivity extends AppCompatActivity {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                Toast.makeText(MainActivity.this, "" + position,
-                        Toast.LENGTH_SHORT).show();
+                    // Send intent to SingleViewActivity
+                    Intent i = new Intent(getApplicationContext(), MovieActivity.class);
+                    // Pass image index
+                    i.putExtra("SelectedMovie",(Serializable) arrayList.get(position));
+                    startActivity(i);
             }
         });
     }
