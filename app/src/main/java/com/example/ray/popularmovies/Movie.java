@@ -1,12 +1,13 @@
 package com.example.ray.popularmovies;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
  * Created by Ray on 11/6/2016.
  */
 
-public class Movie {
+public class Movie implements Serializable {
     private BigDecimal id;
     private String title;
     private String originalTitle;
