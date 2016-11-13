@@ -3,8 +3,6 @@ package com.example.ray.popularmovies;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -39,26 +37,16 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         arrayList = new ArrayList<>();
 
         gridView = (GridView) findViewById(R.id.movies_Grid);
 
-        // runOnUiThread(new Runnable() {
-            // @Override
-            // public void run() {
-                // new ReadJSON().execute("http://quocnguyen.16mb.com/products.json");
-                new GetMoviesJSON().execute("https://api.themoviedb.org/3/discover/movie?api_key=" + BuildConfig.MOVIE_DB_API_KEY + "&sort_by=popularity.desc");
-            // }
-        // });
+        runOnUiThread(new Runnable() {
+            @Override
+             public void run() {
+                new GetMoviesJSON().execute("https://api.themoviedb.org/3/movie/popular?api_key=" + BuildConfig.MOVIE_DB_API_KEY + "&language=en-US&page=1");
+            }
+        });
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
@@ -85,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject jsonObject = new JSONObject(content);
                 JSONArray jsonArray =  jsonObject.getJSONArray("results");
 
+                arrayList.clear();
                 for(int i =0;i<jsonArray.length(); i++){
                     JSONObject movieObject = jsonArray.getJSONObject(i);
                     arrayList.add(new Movie(
@@ -104,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     getApplicationContext(), R.layout.movies_list_item, arrayList
             );
             gridView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
         }
     }
 
@@ -144,10 +134,26 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.order_by_popularity) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    new GetMoviesJSON().execute("https://api.themoviedb.org/3/movie/popular?api_key=" + BuildConfig.MOVIE_DB_API_KEY + "&language=en-US&page=1");
+                }
+            });
             return true;
         }
 
+        if (id == R.id.order_by_ratings) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    new GetMoviesJSON().execute("https://api.themoviedb.org/3/movie/top_rated?api_key=" + BuildConfig.MOVIE_DB_API_KEY + "&language=en-US&page=1");
+                }
+            });
+            return true;
+
+        }
         return super.onOptionsItemSelected(item);
     }
 }
