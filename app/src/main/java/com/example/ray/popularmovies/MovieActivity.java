@@ -26,7 +26,6 @@ public class MovieActivity extends Activity {
 
         Movie movie = (Movie)getIntent().getSerializableExtra("SelectedMovie");
 
-        // ImageAdapter imageAdapter = new ImageAdapter(this);
         ImageView imageView = (ImageView) findViewById(R.id.SingleView);
         Picasso.with(getApplicationContext()).load(movie.getPosterPath()).into(imageView);
 

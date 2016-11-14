@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Your Movie Curator</string>
+    <string name="app_name">My Movie Curator</string>
     <string name="action_settings">Settings</string>
     <string name="order_by_popularity">By Popularity</string>
     <string name="order_by_ratings">By Ratings</string>

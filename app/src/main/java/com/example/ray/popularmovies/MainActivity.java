@@ -52,8 +52,7 @@ public class MainActivity extends AppCompatActivity {
                         .appendPath("movie")
                         .appendPath("popular")
                         .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
-                        .appendQueryParameter("language", "en-US")
-                        .appendQueryParameter("page", "1");
+                        .appendQueryParameter("language", "en-US");
                 new GetMoviesJSON().execute(uri.build().toString());
             }
         });
@@ -68,6 +67,60 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(i);
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.order_by_popularity) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Uri.Builder uri = new Uri.Builder();
+                    uri.scheme("https")
+                            .authority("api.themoviedb.org")
+                            .appendPath("3")
+                            .appendPath("movie")
+                            .appendPath("popular")
+                            .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
+                            .appendQueryParameter("language", "en-US");
+                    new GetMoviesJSON().execute(uri.build().toString());
+                }
+            });
+            return true;
+        }
+
+        if (id == R.id.order_by_ratings) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Uri.Builder uri = new Uri.Builder();
+                    uri.scheme("https")
+                            .authority("api.themoviedb.org")
+                            .appendPath("3")
+                            .appendPath("movie")
+                            .appendPath("top_rated")
+                            .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
+                            .appendQueryParameter("language", "en-US");
+                    new GetMoviesJSON().execute(uri.build().toString());
+                }
+            });
+            return true;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     class GetMoviesJSON extends AsyncTask<String, Integer, String> {
@@ -85,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
                 arrayList.clear();
                 for(int i =0;i<jsonArray.length(); i++){
-                    JSONObject movieObject = jsonArray.getJSONObject(i);
+                    JSONObject movie = jsonArray.getJSONObject(i);
                     Uri.Builder uri = new Uri.Builder();
                     uri.scheme("https")
                             .authority("image.tmdb.org")
@@ -94,13 +147,13 @@ public class MainActivity extends AppCompatActivity {
                             .appendPath("w185");
 
                     arrayList.add(new Movie(
-                            new BigInteger(movieObject.getString("id")),
-                            movieObject.getString("title"),
-                            new String(uri.build().toString() + movieObject.getString("poster_path")),
-                            movieObject.getString("backdrop_path"),
-                            movieObject.getString("overview"),
-                            movieObject.getString("release_date"),
-                            Double.parseDouble(movieObject.getString("popularity"))
+                            new BigInteger(movie.getString("id")),
+                            movie.getString("title"),
+                            new String(uri.build().toString() + movie.getString("poster_path")),
+                            movie.getString("backdrop_path"),
+                            movie.getString("overview"),
+                            movie.getString("release_date"),
+                            Double.parseDouble(movie.getString("popularity"))
                     ));
                 }
             } catch (JSONException e) {
@@ -134,61 +187,5 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return content.toString();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.order_by_popularity) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Uri.Builder uri = new Uri.Builder();
-                    uri.scheme("https")
-                            .authority("api.themoviedb.org")
-                            .appendPath("3")
-                            .appendPath("movie")
-                            .appendPath("popular")
-                            .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
-                            .appendQueryParameter("language", "en-US")
-                            .appendQueryParameter("page", "1");
-                    new GetMoviesJSON().execute(uri.build().toString());
-                }
-            });
-            return true;
-        }
-
-        if (id == R.id.order_by_ratings) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Uri.Builder uri = new Uri.Builder();
-                    uri.scheme("https")
-                            .authority("api.themoviedb.org")
-                            .appendPath("3")
-                            .appendPath("movie")
-                            .appendPath("top_rated")
-                            .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
-                            .appendQueryParameter("language", "en-US")
-                            .appendQueryParameter("page", "1");
-                    new GetMoviesJSON().execute(uri.build().toString());
-                }
-            });
-            return true;
-
-        }
-        return super.onOptionsItemSelected(item);
     }
 }
