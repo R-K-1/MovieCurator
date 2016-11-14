@@ -37,7 +37,7 @@ public class MovieActivity extends Activity {
         releaseDateView.setText(movie.getReleaseDate());
 
         TextView voteView = (TextView) findViewById(R.id.movie_detail_vote_average);
-        voteView.setText(movie.getPopularity().toString());
+        voteView.setText(Double.toString(movie.getPopularity()));
 
         TextView synopsisView = (TextView) findViewById(R.id.movie_detail_plot_synopsis);
         synopsisView.setText(movie.getOverview());

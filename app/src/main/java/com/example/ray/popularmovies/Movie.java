@@ -1,24 +1,24 @@
 package com.example.ray.popularmovies;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
  * Created by Ray on 11/6/2016.
  */
 
 public class Movie implements Serializable {
-    private BigDecimal id;
+    private BigInteger id;
     private String title;
     private String originalTitle;
     private String posterPath;
     private String backdropPath;
     private String overview;
     private String releaseDate;
-    private BigDecimal popularity;
+    private double popularity;
 
-    public Movie(BigDecimal id, String title, String posterPath, String backdropPath, String overview,
-                 String releaseDate, BigDecimal popularity) {
+    public Movie(BigInteger id, String title, String posterPath, String backdropPath, String overview,
+                 String releaseDate, double popularity) {
         this.id = id;
         this.title = title;
         this.posterPath = posterPath;
@@ -52,11 +52,11 @@ public class Movie implements Serializable {
         this.releaseDate = releaseDate;
     }
 
-    public BigDecimal getId() {
+    public BigInteger getId() {
         return id;
     }
 
-    public void setId(BigDecimal id) {
+    public void setId(BigInteger id) {
         this.id = id;
     }
 
@@ -84,11 +84,11 @@ public class Movie implements Serializable {
         this.backdropPath = backdropPath;
     }
 
-    public BigDecimal getPopularity() {
+    public double getPopularity() {
         return popularity;
     }
 
-    public void setPopularity(BigDecimal popularity) {
+    public void setPopularity(double popularity) {
         this.popularity = popularity;
     }
 }

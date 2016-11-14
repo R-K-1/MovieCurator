@@ -1,6 +1,7 @@
 package com.example.ray.popularmovies;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,7 +19,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -44,7 +45,16 @@ public class MainActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
              public void run() {
-                new GetMoviesJSON().execute("https://api.themoviedb.org/3/movie/popular?api_key=" + BuildConfig.MOVIE_DB_API_KEY + "&language=en-US&page=1");
+                Uri.Builder uri = new Uri.Builder();
+                uri.scheme("https")
+                        .authority("api.themoviedb.org")
+                        .appendPath("3")
+                        .appendPath("movie")
+                        .appendPath("popular")
+                        .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
+                        .appendQueryParameter("language", "en-US")
+                        .appendQueryParameter("page", "1");
+                new GetMoviesJSON().execute(uri.build().toString());
             }
         });
 
@@ -76,14 +86,21 @@ public class MainActivity extends AppCompatActivity {
                 arrayList.clear();
                 for(int i =0;i<jsonArray.length(); i++){
                     JSONObject movieObject = jsonArray.getJSONObject(i);
+                    Uri.Builder uri = new Uri.Builder();
+                    uri.scheme("https")
+                            .authority("image.tmdb.org")
+                            .appendPath("t")
+                            .appendPath("p")
+                            .appendPath("w185");
+
                     arrayList.add(new Movie(
-                            new BigDecimal(movieObject.getString("id")),
+                            new BigInteger(movieObject.getString("id")),
                             movieObject.getString("title"),
-                            new String("https://image.tmdb.org/t/p/w185" + movieObject.getString("poster_path")),
+                            new String(uri.build().toString() + movieObject.getString("poster_path")),
                             movieObject.getString("backdrop_path"),
                             movieObject.getString("overview"),
                             movieObject.getString("release_date"),
-                            new BigDecimal(movieObject.getString("popularity"))
+                            Double.parseDouble(movieObject.getString("popularity"))
                     ));
                 }
             } catch (JSONException e) {
@@ -138,7 +155,16 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    new GetMoviesJSON().execute("https://api.themoviedb.org/3/movie/popular?api_key=" + BuildConfig.MOVIE_DB_API_KEY + "&language=en-US&page=1");
+                    Uri.Builder uri = new Uri.Builder();
+                    uri.scheme("https")
+                            .authority("api.themoviedb.org")
+                            .appendPath("3")
+                            .appendPath("movie")
+                            .appendPath("popular")
+                            .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
+                            .appendQueryParameter("language", "en-US")
+                            .appendQueryParameter("page", "1");
+                    new GetMoviesJSON().execute(uri.build().toString());
                 }
             });
             return true;
@@ -148,7 +174,16 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    new GetMoviesJSON().execute("https://api.themoviedb.org/3/movie/top_rated?api_key=" + BuildConfig.MOVIE_DB_API_KEY + "&language=en-US&page=1");
+                    Uri.Builder uri = new Uri.Builder();
+                    uri.scheme("https")
+                            .authority("api.themoviedb.org")
+                            .appendPath("3")
+                            .appendPath("movie")
+                            .appendPath("top_rated")
+                            .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
+                            .appendQueryParameter("language", "en-US")
+                            .appendQueryParameter("page", "1");
+                    new GetMoviesJSON().execute(uri.build().toString());
                 }
             });
             return true;
