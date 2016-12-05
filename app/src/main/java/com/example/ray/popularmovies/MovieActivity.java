@@ -24,18 +24,18 @@ public class MovieActivity extends Activity {
         Movie movie = (Movie) i.getParcelableExtra("SelectedMovie");
 
         ImageView imageView = (ImageView) findViewById(R.id.SingleView);
-        Picasso.with(getApplicationContext()).load(movie.getPosterPath()).into(imageView);
+        Picasso.with(getApplicationContext()).load(movie.getmPosterPath()).into(imageView);
 
         TextView titleView = (TextView) findViewById(R.id.movie_detail_title);
         titleView.setText(movie.getTitle());
 
         TextView releaseDateView = (TextView) findViewById(R.id.movie_detail_release_date);
-        releaseDateView.setText(movie.getReleaseDate());
+        releaseDateView.setText(movie.getmReleaseDate());
 
         TextView voteView = (TextView) findViewById(R.id.movie_detail_vote_average);
-        voteView.setText(Double.toString(movie.getPopularity()));
+        voteView.setText(Double.toString(movie.getmPopularity()));
 
         TextView synopsisView = (TextView) findViewById(R.id.movie_detail_plot_synopsis);
-        synopsisView.setText(movie.getOverview());
+        synopsisView.setText(movie.getmOverview());
     }
 }

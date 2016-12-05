@@ -10,99 +10,99 @@ import java.math.BigInteger;
  */
 
 public class Movie implements Parcelable {
-    private BigInteger id;
-    private String title;
-    private String originalTitle;
-    private String posterPath;
-    private String backdropPath;
-    private String overview;
-    private String releaseDate;
-    private double popularity;
+    private BigInteger mId;
+    private String mTitle;
+    private String mOriginalTitle;
+    private String mPosterPath;
+    private String mBackdropPath;
+    private String mOverview;
+    private String mReleaseDate;
+    private double mPopularity;
 
     public Movie(BigInteger id, String title, String posterPath, String backdropPath, String overview,
                  String releaseDate, double popularity) {
-        this.id = id;
-        this.title = title;
-        this.posterPath = posterPath;
-        this.backdropPath = backdropPath;
-        this.overview = overview;
-        this.releaseDate = releaseDate;
-        this.popularity = popularity;
+        this.mId = id;
+        this.mTitle = title;
+        this.mPosterPath = posterPath;
+        this.mBackdropPath = backdropPath;
+        this.mOverview = overview;
+        this.mReleaseDate = releaseDate;
+        this.mPopularity = popularity;
     }
 
-    public String getPosterPath() {
-        return posterPath;
+    public String getmPosterPath() {
+        return mPosterPath;
     }
 
-    public void setPosterPath(String posterPath) {
-        this.posterPath = posterPath;
+    public void setmPosterPath(String mPosterPath) {
+        this.mPosterPath = mPosterPath;
     }
 
-    public String getOverview() {
-        return overview;
+    public String getmOverview() {
+        return mOverview;
     }
 
-    public void setOverview(String overview) {
-        this.overview = overview;
+    public void setmOverview(String mOverview) {
+        this.mOverview = mOverview;
     }
 
-    public String getReleaseDate() {
-        return releaseDate;
+    public String getmReleaseDate() {
+        return mReleaseDate;
     }
 
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
+    public void setmReleaseDate(String mReleaseDate) {
+        this.mReleaseDate = mReleaseDate;
     }
 
-    public BigInteger getId() {
-        return id;
+    public BigInteger getmId() {
+        return mId;
     }
 
-    public void setId(BigInteger id) {
-        this.id = id;
+    public void setmId(BigInteger mId) {
+        this.mId = mId;
     }
 
-    public String getOriginalTitle() {
-        return originalTitle;
+    public String getmOriginalTitle() {
+        return mOriginalTitle;
     }
 
-    public void setOriginalTitle(String originalTitle) {
-        this.originalTitle = originalTitle;
+    public void setmOriginalTitle(String mOriginalTitle) {
+        this.mOriginalTitle = mOriginalTitle;
     }
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
     public void setTitle(String originalTitle) {
-        this.title = title;
+        this.mTitle = mTitle;
     }
 
-    public String getBackdropPath() {
-        return backdropPath;
+    public String getmBackdropPath() {
+        return mBackdropPath;
     }
 
-    public void setBackdropPath(String backdropPath) {
-        this.backdropPath = backdropPath;
+    public void setmBackdropPath(String mBackdropPath) {
+        this.mBackdropPath = mBackdropPath;
     }
 
-    public double getPopularity() {
-        return popularity;
+    public double getmPopularity() {
+        return mPopularity;
     }
 
-    public void setPopularity(double popularity) {
-        this.popularity = popularity;
+    public void setmPopularity(double mPopularity) {
+        this.mPopularity = mPopularity;
     }
 
     protected Movie(Parcel in) {
-        id = (BigInteger) in.readValue(BigInteger.class.getClassLoader());
-        title = in.readString();
-        originalTitle = in.readString();
-        posterPath = in.readString();
-        backdropPath = in.readString();
-        overview = in.readString();
-        releaseDate = in.readString();
-        popularity = in.readDouble();
+        mId = (BigInteger) in.readValue(BigInteger.class.getClassLoader());
+        mTitle = in.readString();
+        mOriginalTitle = in.readString();
+        mPosterPath = in.readString();
+        mBackdropPath = in.readString();
+        mOverview = in.readString();
+        mReleaseDate = in.readString();
+        mPopularity = in.readDouble();
     }
 
     @Override
@@ -112,14 +112,14 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeValue(id);
-        dest.writeString(title);
-        dest.writeString(originalTitle);
-        dest.writeString(posterPath);
-        dest.writeString(backdropPath);
-        dest.writeString(overview);
-        dest.writeString(releaseDate);
-        dest.writeDouble(popularity);
+        dest.writeValue(mId);
+        dest.writeString(mTitle);
+        dest.writeString(mOriginalTitle);
+        dest.writeString(mPosterPath);
+        dest.writeString(mBackdropPath);
+        dest.writeString(mOverview);
+        dest.writeString(mReleaseDate);
+        dest.writeDouble(mPopularity);
     }
 
     @SuppressWarnings("unused")

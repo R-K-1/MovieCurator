@@ -57,7 +57,7 @@ public class MoviesGridAdapter extends BaseAdapter {
         // Movie movie = (Movie) movies[position];
         Movie movie = mMovies.get(position);
 
-        Picasso.with(mContext).load(movie.getPosterPath()).into(imageView);
+        Picasso.with(mContext).load(movie.getmPosterPath()).into(imageView);
 
 
         return imageView;
