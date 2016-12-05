@@ -21,10 +21,7 @@ public class MovieActivity extends Activity {
         // Get intent data
         Intent i = getIntent();
 
-        // Selected image id
-        int position = i.getExtras().getInt("id");
-
-        Movie movie = (Movie)getIntent().getSerializableExtra("SelectedMovie");
+        Movie movie = (Movie) i.getParcelableExtra("SelectedMovie");
 
         ImageView imageView = (ImageView) findViewById(R.id.SingleView);
         Picasso.with(getApplicationContext()).load(movie.getPosterPath()).into(imageView);

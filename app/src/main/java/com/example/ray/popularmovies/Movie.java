@@ -1,13 +1,15 @@
 package com.example.ray.popularmovies;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.math.BigInteger;
 
 /**
  * Created by Ray on 11/6/2016.
  */
 
-public class Movie implements Serializable {
+public class Movie implements Parcelable {
     private BigInteger id;
     private String title;
     private String originalTitle;
@@ -91,4 +93,45 @@ public class Movie implements Serializable {
     public void setPopularity(double popularity) {
         this.popularity = popularity;
     }
+
+    protected Movie(Parcel in) {
+        id = (BigInteger) in.readValue(BigInteger.class.getClassLoader());
+        title = in.readString();
+        originalTitle = in.readString();
+        posterPath = in.readString();
+        backdropPath = in.readString();
+        overview = in.readString();
+        releaseDate = in.readString();
+        popularity = in.readDouble();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(id);
+        dest.writeString(title);
+        dest.writeString(originalTitle);
+        dest.writeString(posterPath);
+        dest.writeString(backdropPath);
+        dest.writeString(overview);
+        dest.writeString(releaseDate);
+        dest.writeDouble(popularity);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 }

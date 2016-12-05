@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -18,7 +19,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
@@ -28,8 +28,6 @@ public class MainActivity extends AppCompatActivity {
 
     ArrayList<Movie> arrayList;
     GridView gridView   ;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,20 +40,15 @@ public class MainActivity extends AppCompatActivity {
 
         gridView = (GridView) findViewById(R.id.movies_Grid);
 
-        runOnUiThread(new Runnable() {
-            @Override
-             public void run() {
-                Uri.Builder uri = new Uri.Builder();
-                uri.scheme("https")
-                        .authority("api.themoviedb.org")
-                        .appendPath("3")
-                        .appendPath("movie")
-                        .appendPath("popular")
-                        .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
-                        .appendQueryParameter("language", "en-US");
-                new GetMoviesJSON().execute(uri.build().toString());
-            }
-        });
+        Uri.Builder uri = new Uri.Builder();
+        uri.scheme("https")
+                .authority("api.themoviedb.org")
+                .appendPath("3")
+                .appendPath("movie")
+                .appendPath("popular")
+                .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
+                .appendQueryParameter("language", "en-US");
+        new GetMoviesJSON().execute(uri.build().toString());
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
@@ -63,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                     // Send intent to SingleViewActivity
                     Intent i = new Intent(getApplicationContext(), MovieActivity.class);
                     // Pass image index
-                    i.putExtra("SelectedMovie",(Serializable) arrayList.get(position));
+                    i.putExtra("SelectedMovie",(Parcelable) arrayList.get(position));
                     startActivity(i);
             }
         });
@@ -85,38 +78,28 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.order_by_popularity) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Uri.Builder uri = new Uri.Builder();
-                    uri.scheme("https")
-                            .authority("api.themoviedb.org")
-                            .appendPath("3")
-                            .appendPath("movie")
-                            .appendPath("popular")
-                            .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
-                            .appendQueryParameter("language", "en-US");
-                    new GetMoviesJSON().execute(uri.build().toString());
-                }
-            });
+            Uri.Builder uri = new Uri.Builder();
+            uri.scheme("https")
+                    .authority("api.themoviedb.org")
+                    .appendPath("3")
+                    .appendPath("movie")
+                    .appendPath("popular")
+                    .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
+                    .appendQueryParameter("language", "en-US");
+            new GetMoviesJSON().execute(uri.build().toString());
             return true;
         }
 
         if (id == R.id.order_by_ratings) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Uri.Builder uri = new Uri.Builder();
-                    uri.scheme("https")
-                            .authority("api.themoviedb.org")
-                            .appendPath("3")
-                            .appendPath("movie")
-                            .appendPath("top_rated")
-                            .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
-                            .appendQueryParameter("language", "en-US");
-                    new GetMoviesJSON().execute(uri.build().toString());
-                }
-            });
+            Uri.Builder uri = new Uri.Builder();
+            uri.scheme("https")
+                    .authority("api.themoviedb.org")
+                    .appendPath("3")
+                    .appendPath("movie")
+                    .appendPath("top_rated")
+                    .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
+                    .appendQueryParameter("language", "en-US");
+            new GetMoviesJSON().execute(uri.build().toString());
             return true;
 
         }
