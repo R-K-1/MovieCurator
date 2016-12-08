@@ -17,17 +17,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.IOException;
 import java.math.BigInteger;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
+
+import okhttp3.OkHttpClient;
 
 public class MainActivity extends AppCompatActivity {
 
     ArrayList<Movie> arrayList;
-    GridView gridView   ;
+    GridView gridView;
+    private OkHttpClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,17 +38,11 @@ public class MainActivity extends AppCompatActivity {
 
         arrayList = new ArrayList<>();
 
+        client = new OkHttpClient();
+
         gridView = (GridView) findViewById(R.id.movies_Grid);
 
-        Uri.Builder uri = new Uri.Builder();
-        uri.scheme("https")
-                .authority("api.themoviedb.org")
-                .appendPath("3")
-                .appendPath("movie")
-                .appendPath("popular")
-                .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
-                .appendQueryParameter("language", "en-US");
-        new GetMoviesJSON().execute(uri.build().toString());
+        new GetMoviesJSON().execute("popular");
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
@@ -78,30 +72,13 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.order_by_popularity) {
-            Uri.Builder uri = new Uri.Builder();
-            uri.scheme("https")
-                    .authority("api.themoviedb.org")
-                    .appendPath("3")
-                    .appendPath("movie")
-                    .appendPath("popular")
-                    .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
-                    .appendQueryParameter("language", "en-US");
-            new GetMoviesJSON().execute(uri.build().toString());
+            new GetMoviesJSON().execute("popular");
             return true;
         }
 
         if (id == R.id.order_by_ratings) {
-            Uri.Builder uri = new Uri.Builder();
-            uri.scheme("https")
-                    .authority("api.themoviedb.org")
-                    .appendPath("3")
-                    .appendPath("movie")
-                    .appendPath("top_rated")
-                    .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
-                    .appendQueryParameter("language", "en-US");
-            new GetMoviesJSON().execute(uri.build().toString());
+            new GetMoviesJSON().execute("top_rated");
             return true;
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -110,7 +87,13 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            return readURL(params[0]);
+            String response = new String();
+            try {
+                response = ApiCall.GET(client, RequestBuilder.buildGetMoviesURI(params[0]).toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return response;
         }
 
         @Override
@@ -150,25 +133,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    private static String readURL(String theUrl) {
-        StringBuilder content = new StringBuilder();
-        try {
-            // create a url object
-            URL url = new URL(theUrl);
-            // create a urlconnection object
-            URLConnection urlConnection = url.openConnection();
-            // wrap the urlconnection in a bufferedreader
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            String line;
-            // read from the urlconnection via the bufferedreader
-            while ((line = bufferedReader.readLine()) != null) {
-                content.append(line + "\n");
-            }
-            bufferedReader.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return content.toString();
-    }
 }
