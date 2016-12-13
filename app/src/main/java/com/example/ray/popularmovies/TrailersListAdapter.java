@@ -1,0 +1,71 @@
+package com.example.ray.popularmovies;
+
+import android.content.Context;
+import android.net.Uri;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+
+/**
+ * Created by Ray on 12/12/2016.
+ */
+
+public class TrailersListAdapter extends BaseAdapter {
+    private Context mContext;
+    private int mResource;
+    private ArrayList<String> mURLs;
+
+    public TrailersListAdapter(Context context, int resource, ArrayList<String> URLs) {
+        // super(context, resource, products);
+        this.mContext = context;
+        this.mResource = resource;
+        this.mURLs = URLs;
+    }
+
+    public int getCount() { return this.mURLs.size();}
+
+    public Object getItem(int position) {
+        return null;
+    }
+
+    public long getItemId(int position) {
+        return 0;
+    }
+
+    // create a new ImageView for each item referenced by the Adapter
+    public View getView(int position, View convertView, ViewGroup parent) {
+
+        ImageView imageView;
+        if (convertView == null){
+            // if it's not recycled, initialize some attributes
+            imageView = new ImageView(mContext);
+            imageView.setLayoutParams(new GridView.LayoutParams(150, 180));
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setPadding(1, 1, 1, 1);
+
+        } else {
+            imageView = (ImageView) convertView;
+        }
+        // Commenting out line below momemtarily because I get out of bound index exception
+        // Movie movie = mMovies.get(position);
+
+        Uri.Builder posterThumbnail = new Uri.Builder();
+        posterThumbnail.scheme("https")
+            .authority("img.youtube.com")
+            .appendPath("vi")
+            .appendPath(mURLs.get(position))
+            .appendPath("0.jpg");
+
+        Picasso.with(mContext).load(posterThumbnail.toString()).into(imageView);
+
+
+        return imageView;
+
+    }
+}
