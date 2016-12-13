@@ -44,23 +44,17 @@ public class MoviesGridAdapter extends BaseAdapter {
         if (convertView == null){
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
-            // imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
-            imageView.setLayoutParams(new GridView.LayoutParams(150, 180));
+            imageView.setLayoutParams(new GridView.LayoutParams(300, 360));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            // imageView.setPadding(8, 8, 8, 8);
             imageView.setPadding(0, 0, 0, 0);
 
         } else {
             imageView = (ImageView) convertView;
         }
-        // Commenting out line below momemtarily because I get out of bound index exception
-        // Movie movie = (Movie) movies[position];
-        Movie movie = mMovies.get(position);
 
+        Movie movie = mMovies.get(position);
         Picasso.with(mContext).load(movie.getmPosterPath()).into(imageView);
 
-
         return imageView;
-
     }
 }
