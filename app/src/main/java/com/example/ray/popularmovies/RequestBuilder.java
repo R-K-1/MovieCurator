@@ -22,4 +22,19 @@ public class RequestBuilder {
 
     }
 
+    public static Uri.Builder buildGetTrailersURL(String movieId) {
+
+        String x = movieId;
+        return new Uri.Builder ()
+                .scheme("https")
+                .authority("api.themoviedb.org")
+                .appendPath("3")
+                .appendPath("movie")
+                .appendPath(x)
+                .appendPath("videos")
+                .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
+                .appendQueryParameter("language", "en-US");
+
+    }
+
 }
