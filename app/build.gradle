@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def MyMovieDBApiKey = properties.getProperty('MyMovieDBApiKey')
+
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.3"
@@ -31,5 +35,6 @@ dependencies {
     compile 'com.android.support:design:24.2.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.squareup.okhttp3:okhttp:3.3.1'
+    compile 'com.facebook.stetho:stetho:1.4.1'
     testCompile 'junit:junit:4.12'
 }
