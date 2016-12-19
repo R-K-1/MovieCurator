@@ -24,6 +24,9 @@
 
         <activity android:name=".MovieActivity"></activity>
 
+        <provider android:name=".MoviesProvider"
+            android:authorities="com.example.ray.popularmovies"/>
+
     </application>
 
 </manifest>
