@@ -23,12 +23,4 @@
 
     <include layout="@layout/content_main" />
 
-    <GridView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/movies_Grid"
-        android:gravity="center"
-        android:numColumns="3"
-        android:stretchMode="columnWidth"/>
-
 </android.support.design.widget.CoordinatorLayout>

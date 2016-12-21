@@ -21,7 +21,6 @@ public class MoviesGridAdapter extends BaseAdapter {
     private ArrayList<Movie> mMovies;
 
     public MoviesGridAdapter(Context context, int resource, ArrayList<Movie> movies) {
-        // super(context, resource, products);
         this.mContext = context;
         this.mResource = resource;
         this.mMovies = movies;

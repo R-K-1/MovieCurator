@@ -11,9 +11,12 @@
     tools:context="com.example.ray.popularmovies.MainActivityFragment"
     tools:showIn="@layout/activity_main">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="" />
+    <GridView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/movies_Grid"
+        android:gravity="center"
+        android:numColumns="2"
+        android:stretchMode="columnWidth"/>
 
 </RelativeLayout>
