@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -39,6 +40,8 @@ public class MoviesGridAdapter extends BaseAdapter {
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
 
+        Utils utils = new Utils();
+
         ImageView imageView;
         if (convertView == null){
             // if it's not recycled, initialize some attributes
@@ -52,7 +55,8 @@ public class MoviesGridAdapter extends BaseAdapter {
         }
 
         Movie movie = mMovies.get(position);
-        Picasso.with(mContext).load(movie.getmPosterPath()).into(imageView);
+        File imageFile = utils.getImageFromInternalStorage(mContext, "", movie.getmPosterPath());
+        Picasso.with(mContext).load(imageFile).into(imageView);
 
         return imageView;
     }

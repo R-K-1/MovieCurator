@@ -12,4 +12,14 @@
         android:title="@string/order_by_ratings"
         android:orderInCategory="200"
         app:showAsAction="never" />
+
+    <item android:id="@+id/order_by_favorites"
+        android:title="@string/order_by_favorites"
+        android:orderInCategory="300"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/run_sync"
+        android:title="@string/run_sync"
+        android:orderInCategory="300"
+        app:showAsAction="never" />
 </menu>

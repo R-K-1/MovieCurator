@@ -34,6 +34,10 @@ public class MoviesProvider extends ContentProvider {
     static final String OVERVIEW = "overview";
     static final String RELEASE_DATE = "releaseDate";
     static final String POPULARITY = "popularity";
+    static final String IS_POPULAR = "isPopular";
+    static final String IS_TOP_RATED = "isTopRated";
+    static final String IS_FAVORITE = "isFavorite";
+
 
     private static HashMap<String, String> MOVIES_PROJECTION_MAP;
 
@@ -56,7 +60,7 @@ public class MoviesProvider extends ContentProvider {
     static final String MOVIES_TABLE_NAME = "movies";
     static final String TRAILERS_TABLE_NAME = "movies";
     static final String COMMENT_TABLE_NAME = "movies";
-    static final int DATABASE_VERSION = 1;
+    static final int DATABASE_VERSION = 2;
     static final String CREATE_DB_TABLE =
             " CREATE TABLE " + MOVIES_TABLE_NAME +
                     " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -67,7 +71,24 @@ public class MoviesProvider extends ContentProvider {
                     " backdropPath TEXT, " +
                     " overview TEXT, " +
                     " releaseDate TEXT, " +
-                    " popularity TEXT);";
+                    " popularity TEXT, " +
+                    " isPopular INTEGER, " +
+                    " isTopRated INTEGER, " +
+                    " isFavorite INTEGER);";
+
+    /*static final String CREATE_DB_TABLE =
+            " CREATE TABLE " + MOVIES_TABLE_NAME +
+                    " (movieDBId TEXT NOT NULL, " +
+                    " title TEXT NOT NULL, " +
+                    " originalTitle TEXT, " +
+                    " posterPath TEXT, " +
+                    " backdropPath TEXT, " +
+                    " overview TEXT, " +
+                    " releaseDate TEXT, " +
+                    " popularity TEXT, " +
+                    " isPopular INTEGER, " +
+                    " isTopRated INTEGER, " +
+                    " isFavorite INTEGER);";*/
 
     /**
      * Helper class that actually creates and manages
