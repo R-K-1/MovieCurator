@@ -17,6 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -38,13 +39,17 @@ public class MovieActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.movie_detail);
 
+        Utils utils = new Utils();
+
         // Get intent data
         Intent i = getIntent();
 
         Movie movie = (Movie) i.getParcelableExtra("SelectedMovie");
 
         ImageView imageView = (ImageView) findViewById(R.id.movie_detail_poster);
-        Picasso.with(getApplicationContext()).load(movie.getmPosterPath()).into(imageView);
+        File imageFile = utils.getImageFromInternalStorage(getApplicationContext(), "", movie.getmPosterPath());
+        // Picasso.with(getApplicationContext()).load(movie.getmPosterPath()).into(imageView);
+        Picasso.with(getApplicationContext()).load(imageFile).into(imageView);
 
         TextView titleView = (TextView) findViewById(R.id.movie_detail_title);
         titleView.setText(movie.getTitle());

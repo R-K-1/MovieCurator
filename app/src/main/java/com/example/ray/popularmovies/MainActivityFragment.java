@@ -15,7 +15,6 @@ import android.widget.GridView;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
@@ -88,7 +87,22 @@ public class MainActivityFragment extends Fragment {
             }
         });
 
+        /*MoviesSyncAdapter x = new MoviesSyncAdapter(getActivity().getApplicationContext(), true, true);
+        Account mAccount = x.getSyncAccount(getActivity().getApplicationContext());
+        x.syncImmediately(getActivity().getApplicationContext());
+        // Pass the settings flags by inserting them in a bundle
+        Bundle settingsBundle = new Bundle();
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_MANUAL, true);
 
+        *//*
+         * Request the sync for the default account, authority, and
+         * manual sync settings
+         *//*
+        ContentResolver.requestSync(mAccount, getContext().getString(R.string.content_authority), settingsBundle);
+        */
     }
 
     public class GetMoviesFromDB extends AsyncTask<String, Integer, String> {
@@ -96,11 +110,12 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             String response = new String();
-            try {
+            response = "";
+/*            try {
                 response = ApiCall.GET(client, RequestBuilder.buildGetMoviesURI(params[0]).toString());
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }*/
             return response;
         }
 

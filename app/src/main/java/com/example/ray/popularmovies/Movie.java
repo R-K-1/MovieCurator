@@ -18,6 +18,9 @@ public class Movie implements Parcelable {
     private String mOverview;
     private String mReleaseDate;
     private double mPopularity;
+    private boolean mInPopular;
+    private boolean mInTopRated;
+    private boolean mInFavorites;
 
     public Movie(BigInteger id, String title, String posterPath, String backdropPath, String overview,
                  String releaseDate, double popularity) {
@@ -28,6 +31,21 @@ public class Movie implements Parcelable {
         this.mOverview = overview;
         this.mReleaseDate = releaseDate;
         this.mPopularity = popularity;
+    }
+
+    public Movie(BigInteger id, String title, String posterPath, String backdropPath, String overview,
+                 String releaseDate, double popularity, boolean isPopular, boolean isTopRated,
+                 boolean isFavorite) {
+        this.mId = id;
+        this.mTitle = title;
+        this.mPosterPath = posterPath;
+        this.mBackdropPath = backdropPath;
+        this.mOverview = overview;
+        this.mReleaseDate = releaseDate;
+        this.mPopularity = popularity;
+        this.mInPopular = isPopular;
+        this.mInTopRated = isTopRated;
+        this.mInFavorites = isFavorite;
     }
 
     public String getmPosterPath() {
@@ -93,6 +111,18 @@ public class Movie implements Parcelable {
     public void setmPopularity(double mPopularity) {
         this.mPopularity = mPopularity;
     }
+
+    public boolean ismInPopular() { return mInPopular; }
+
+    public void setmInPopular(boolean mInPopular) { this.mInPopular = mInPopular; }
+
+    public boolean ismInTopRated() { return mInTopRated; }
+
+    public void setmInTopRated(boolean mInTopRated) { this.mInTopRated = mInTopRated; }
+
+    public boolean ismInFavorites() { return mInFavorites; }
+
+    public void setmInFavorites(boolean mInFavorites) { this.mInFavorites = mInFavorites; }
 
     protected Movie(Parcel in) {
         mId = (BigInteger) in.readValue(BigInteger.class.getClassLoader());
