@@ -3,7 +3,6 @@ package com.example.ray.popularmovies;
 import android.accounts.Account;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -49,6 +48,15 @@ public class MainActivity extends AppCompatActivity {
 
         scheduleAlarm();
 
+        // Pass the settings flags by inserting them in a bundle
+/*        Bundle settingsBundle = new Bundle();
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_MANUAL, true);
+
+        ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);*/
+
     }
 
     @Override
@@ -84,20 +92,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-        if (id == R.id.run_sync) {
-            // Pass the settings flags by inserting them in a bundle
-            Bundle settingsBundle = new Bundle();
-            settingsBundle.putBoolean(
-                    ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-            settingsBundle.putBoolean(
-                    ContentResolver.SYNC_EXTRAS_MANUAL, true);
-
-        /*
-         * Request the sync for the default account, authority, and
-         * manual sync settings
-         */
-            ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);
-        }
         return super.onOptionsItemSelected(item);
     }
 

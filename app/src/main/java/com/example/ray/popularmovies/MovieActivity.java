@@ -1,15 +1,19 @@
 package com.example.ray.popularmovies;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.squareup.picasso.Picasso;
 
@@ -44,12 +48,35 @@ public class MovieActivity extends Activity {
         // Get intent data
         Intent i = getIntent();
 
-        Movie movie = (Movie) i.getParcelableExtra("SelectedMovie");
+        final Movie movie = (Movie) i.getParcelableExtra("SelectedMovie");
 
         ImageView imageView = (ImageView) findViewById(R.id.movie_detail_poster);
         File imageFile = utils.getImageFromInternalStorage(getApplicationContext(), "", movie.getmPosterPath());
-        // Picasso.with(getApplicationContext()).load(movie.getmPosterPath()).into(imageView);
         Picasso.with(getApplicationContext()).load(imageFile).into(imageView);
+
+        final ToggleButton isFavoriteButton = (ToggleButton) findViewById(R.id.isFavorite);
+
+        int currentState = movie.ismInFavorites();
+        int x = movie.ismInFavorites() == 1? R.drawable.star_on: R.drawable.star_off;
+        isFavoriteButton.setBackgroundResource(x);
+        isFavoriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                MoviesProvider.DatabaseHelper y = new MoviesProvider.DatabaseHelper(getApplicationContext());
+                SQLiteDatabase db = y.getWritableDatabase();
+                ContentValues values = new ContentValues();
+                String uri = MoviesProvider.MOVIE_URL + movie.getmId();
+                if (isChecked) {
+                    isFavoriteButton.setBackgroundResource(R.drawable.star_on);
+                    values.put(MoviesProvider.IS_FAVORITE, 1);
+                    getContentResolver().update(Uri.parse(uri), values, null, null);
+                } else {
+                    isFavoriteButton.setBackgroundResource(R.drawable.star_off);
+                    values.put(MoviesProvider.IS_FAVORITE, 0);
+                    getContentResolver().update(Uri.parse(uri), values, null, null);
+                }
+            }
+        });
 
         TextView titleView = (TextView) findViewById(R.id.movie_detail_title);
         titleView.setText(movie.getTitle());

@@ -11,8 +11,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 
-import com.squareup.picasso.Picasso;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,8 +18,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import okhttp3.OkHttpClient;
-
-import static com.example.ray.popularmovies.MoviesProvider.MOVIES_TABLE_NAME;
 
 /**
  * Created by Ray on 12/23/2016.
@@ -59,44 +55,37 @@ public class MovieDBAlarmService extends IntentService {
             JSONObject topRatedMoviesObject = new JSONObject(responseTopRated);
             JSONArray topRatedMoviesArray = topRatedMoviesObject.getJSONArray("results");
 
+            PackageManager pm = getPackageManager();
+            String s = getPackageName();
+            String imgDir = "";
+            try {
+                PackageInfo p = pm.getPackageInfo(s, 0);
+                imgDir = p.applicationInfo.dataDir;
+            } catch (PackageManager.NameNotFoundException e) {
+                Log.w("popularMovies", "Error Package name not found", e);
+            }
+            Utils z = new Utils();
+
+            Uri.Builder uri = new Uri.Builder();
+            uri.scheme("https")
+                    .authority("image.tmdb.org")
+                    .appendPath("t")
+                    .appendPath("p")
+                    .appendPath("w185");
+
+            ContentValues values = new ContentValues();
+
             MoviesProvider.DatabaseHelper y = new MoviesProvider.DatabaseHelper(context);
             SQLiteDatabase db = y.getWritableDatabase();
 
-            db.execSQL("DROP TABLE IF EXISTS " +  MOVIES_TABLE_NAME);
-            db.execSQL(MoviesProvider.CREATE_DB_TABLE);
-
-
-            ContentValues values = new ContentValues();
+            // db.execSQL("DROP TABLE IF EXISTS " +  MOVIES_TABLE_NAME);
+            // db.execSQL(MoviesProvider.CREATE_DB_TABLE);
             // Bulk insert movies into database
             for (int i = 0; i < popularMoviesArray.length(); i++) {
                 JSONObject m = popularMoviesArray.getJSONObject(i);
-                Uri.Builder uri = new Uri.Builder();
-                uri.scheme("https")
-                        .authority("image.tmdb.org")
-                        .appendPath("t")
-                        .appendPath("p")
-                        .appendPath("w185");
-
 
                 String imgURL = uri.build().toString() + m.getString("poster_path");
-
-                PackageManager pm = getPackageManager();
-                String s = getPackageName();
-                String imgDir = "";
-                try {
-                    PackageInfo p = pm.getPackageInfo(s, 0);
-                    imgDir = p.applicationInfo.dataDir;
-                } catch (PackageManager.NameNotFoundException e) {
-                    Log.w("popularMovies", "Error Package name not found", e);
-                }
-
-                // String imgDir = Environment.getex
-                Utils z = new Utils();
-                /*Picasso.with(getApplicationContext()).load(imgURL).into(new
-                        Utils().picassoImageTarget(getApplicationContext(), imgDir, m.getString("poster_path")));*/
-
                 Bitmap b;
-
                 try {
                     b = z.getBitmapFromCloud(context, imgURL);
                     z.saveBitmapToInternalStorage(context, b, m.getString("poster_path") );
@@ -108,7 +97,6 @@ public class MovieDBAlarmService extends IntentService {
                 values.put(MoviesProvider.MOVIE_DB_ID, m.getString("id"));
                 values.put(MoviesProvider.TITLE, m.getString("title"));
                 values.put(MoviesProvider.ORIGINAL_TITLE, m.getString("original_title"));
-                // values.put(MoviesProvider.POSTER_PATH, uri.build().toString() + m.getString("poster_path"));
                 values.put(MoviesProvider.POSTER_PATH, m.getString("poster_path"));
                 values.put(MoviesProvider.BACKDROP_PATH, m.getString("backdrop_path"));
                 values.put(MoviesProvider.OVERVIEW, m.getString("overview"));
@@ -118,18 +106,20 @@ public class MovieDBAlarmService extends IntentService {
                 values.put(MoviesProvider.IS_TOP_RATED, 0);
                 values.put(MoviesProvider.IS_FAVORITE, 0);
 
-                getContentResolver().insert(MoviesProvider.CONTENT_URI, values);
+                // getContentResolver().insert(MoviesProvider.CONTENT_URI, values);
             }
 
-            // Bulk insert movies into database
-            /*for (int i = 0; i < topRatedMoviesArray.length(); i++) {
+            for (int i = 0; i < topRatedMoviesArray.length(); i++) {
                 JSONObject m = topRatedMoviesArray.getJSONObject(i);
-                Uri.Builder uri = new Uri.Builder();
-                uri.scheme("https")
-                        .authority("image.tmdb.org")
-                        .appendPath("t")
-                        .appendPath("p")
-                        .appendPath("w185");
+
+                String imgURL = uri.build().toString() + m.getString("poster_path");
+                Bitmap b;
+                try {
+                    b = z.getBitmapFromCloud(context, imgURL);
+                    z.saveBitmapToInternalStorage(context, b, m.getString("poster_path") );
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 values.clear();
                 values.put(MoviesProvider.MOVIE_DB_ID, m.getString("id"));
@@ -144,29 +134,13 @@ public class MovieDBAlarmService extends IntentService {
                 values.put(MoviesProvider.IS_TOP_RATED, 1);
                 values.put(MoviesProvider.IS_FAVORITE, 0);
 
-                getContentResolver().insert(MoviesProvider.CONTENT_URI, values);
-            }*/
+                // getContentResolver().insert(MoviesProvider.CONTENT_URI, values);
+            }
 
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
-    }
-
-    public Bitmap getBitmapFromCloud(String url) throws IOException {
-        Bitmap mBitmap;
-        Picasso.Builder builder = new Picasso.Builder(context);
-        builder.listener(new Picasso.Listener() {
-            @Override
-            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                exception.printStackTrace();
-
-            }
-        });
-
-        return mBitmap = builder.build().with(context).load(url).get();
     }
 
 }

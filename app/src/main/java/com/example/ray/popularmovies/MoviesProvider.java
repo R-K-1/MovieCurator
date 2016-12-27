@@ -22,8 +22,6 @@ import java.util.HashMap;
 public class MoviesProvider extends ContentProvider {
 
     static final String PROVIDER_NAME = "com.example.ray.popularmovies";
-    static final String URL = "content://" + PROVIDER_NAME + "/movies";
-    static final Uri CONTENT_URI = Uri.parse(URL);
 
     static final String _ID = "_id";
     static final String MOVIE_DB_ID = "movieDBId";
@@ -43,6 +41,10 @@ public class MoviesProvider extends ContentProvider {
 
     static final int MOVIES = 1;
     static final int MOVIE_ID = 2;
+
+    static final String URL = "content://" + PROVIDER_NAME + "/movies";
+    static final Uri CONTENT_URI = Uri.parse(URL);
+    static final String MOVIE_URL = "content://" + PROVIDER_NAME + "/movies/";
 
     static final UriMatcher uriMatcher;
     static{
@@ -215,9 +217,11 @@ public class MoviesProvider extends ContentProvider {
                 break;
 
             case MOVIE_ID:
-                count = db.update(MOVIES_TABLE_NAME, values,
+                /*count = db.update(MOVIES_TABLE_NAME, values,
                         _ID + " = " + uri.getPathSegments().get(1) +
-                                (!TextUtils.isEmpty(selection) ? " AND (" +selection + ')' : ""), selectionArgs);
+                                (!TextUtils.isEmpty(selection) ? " AND (" +selection + ')' : ""), selectionArgs);*/
+                count = db.update(MOVIES_TABLE_NAME, values,
+                    MOVIE_DB_ID + " = " + uri.getPathSegments().get(1), selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri );

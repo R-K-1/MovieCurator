@@ -76,7 +76,6 @@ public class Utils {
     public void saveBitmapToInternalStorage (Context context, Bitmap bmp, String imageName) {
         Log.d("picassoImageTarget", " picassoImageTarget");
         ContextWrapper cw = new ContextWrapper(context);
-        // final File directory = cw.getDir(imageDir, Context.MODE_PRIVATE); // path to /data/data/yourapp/app_imageDir
         File directory = cw.getDir("My Movie Curator", Context.MODE_PRIVATE);
         File myImageFile = new File(directory, imageName); // Create image file
 
@@ -94,32 +93,9 @@ public class Utils {
             }
         }
         Log.i("image", "image saved to >>>" + myImageFile.getAbsolutePath());
-
-
-        /*FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(filename);
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
-            // PNG is a lossless format, the compression factor (100) is ignored
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }*/
-
     }
 
     public File getImageFromInternalStorage (Context context, String imageDir, String imageName) {
-        /*ContextWrapper cw = new ContextWrapper(getApplicationContext());
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-        File myImageFile = new File(directory, "my_image.jpeg");
-        */
         ContextWrapper cw = new ContextWrapper(context);
         File directory = cw.getDir("My Movie Curator", Context.MODE_PRIVATE);
         File myImageFile = new File(directory, imageName);

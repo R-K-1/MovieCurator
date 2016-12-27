@@ -18,9 +18,9 @@ public class Movie implements Parcelable {
     private String mOverview;
     private String mReleaseDate;
     private double mPopularity;
-    private boolean mInPopular;
-    private boolean mInTopRated;
-    private boolean mInFavorites;
+    private int mInPopular;
+    private int mInTopRated;
+    private int mInFavorites;
 
     public Movie(BigInteger id, String title, String posterPath, String backdropPath, String overview,
                  String releaseDate, double popularity) {
@@ -34,8 +34,8 @@ public class Movie implements Parcelable {
     }
 
     public Movie(BigInteger id, String title, String posterPath, String backdropPath, String overview,
-                 String releaseDate, double popularity, boolean isPopular, boolean isTopRated,
-                 boolean isFavorite) {
+                 String releaseDate, double popularity, int isPopular, int isTopRated,
+                 int isFavorite) {
         this.mId = id;
         this.mTitle = title;
         this.mPosterPath = posterPath;
@@ -112,17 +112,17 @@ public class Movie implements Parcelable {
         this.mPopularity = mPopularity;
     }
 
-    public boolean ismInPopular() { return mInPopular; }
+    public int ismInPopular() { return mInPopular; }
 
-    public void setmInPopular(boolean mInPopular) { this.mInPopular = mInPopular; }
+    public void setmInPopular(int mInPopular) { this.mInPopular = mInPopular; }
 
-    public boolean ismInTopRated() { return mInTopRated; }
+    public int ismInTopRated() { return mInTopRated; }
 
-    public void setmInTopRated(boolean mInTopRated) { this.mInTopRated = mInTopRated; }
+    public void setmInTopRated(int mInTopRated) { this.mInTopRated = mInTopRated; }
 
-    public boolean ismInFavorites() { return mInFavorites; }
+    public int ismInFavorites() { return mInFavorites; }
 
-    public void setmInFavorites(boolean mInFavorites) { this.mInFavorites = mInFavorites; }
+    public void setmInFavorites(int mInFavorites) { this.mInFavorites = mInFavorites; }
 
     protected Movie(Parcel in) {
         mId = (BigInteger) in.readValue(BigInteger.class.getClassLoader());
@@ -133,6 +133,9 @@ public class Movie implements Parcelable {
         mOverview = in.readString();
         mReleaseDate = in.readString();
         mPopularity = in.readDouble();
+        mInPopular = in.readInt();
+        mInTopRated = in.readInt();
+        mInFavorites = in.readInt();
     }
 
     @Override
@@ -150,6 +153,9 @@ public class Movie implements Parcelable {
         dest.writeString(mOverview);
         dest.writeString(mReleaseDate);
         dest.writeDouble(mPopularity);
+        dest.writeInt(mInPopular);
+        dest.writeInt(mInTopRated);
+        dest.writeInt(mInFavorites);
     }
 
     @SuppressWarnings("unused")
