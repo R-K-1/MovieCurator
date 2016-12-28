@@ -1,7 +1,6 @@
 package com.example.ray.popularmovies;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -10,6 +9,7 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -41,6 +41,8 @@ public class TrailersListAdapter extends BaseAdapter {
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
 
+        Utils utils = new Utils();
+
         ImageView imageView;
         if (convertView == null){
             // if it's not recycled, initialize some attributes
@@ -52,18 +54,9 @@ public class TrailersListAdapter extends BaseAdapter {
         } else {
             imageView = (ImageView) convertView;
         }
-        // Commenting out line below momemtarily because I get out of bound index exception
-        // Movie movie = mMovies.get(position);
 
-        Uri.Builder posterThumbnail = new Uri.Builder();
-        posterThumbnail.scheme("https")
-            .authority("img.youtube.com")
-            .appendPath("vi")
-            .appendPath(mURLs.get(position))
-            .appendPath("0.jpg");
-
-        Picasso.with(mContext).load(posterThumbnail.toString()).into(imageView);
-
+        File imageFile = utils.getImageFromInternalStorage(mContext, "", (mURLs.get(position) + ".jpg"));
+        Picasso.with(mContext).load(imageFile).into(imageView);
 
         return imageView;
 

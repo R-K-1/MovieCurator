@@ -95,28 +95,24 @@ public class MainActivityFragment extends Fragment {
             arrayList.clear();
 
             Cursor c = getActivity().getApplicationContext().getContentResolver().query(
-                    MoviesProvider.CONTENT_URI, null, null, null, null);
+                    MoviesProvider.MOVIES_BASE_URI, null, null, null, null);
 
-            try {
-                if (c != null) {
-                    while (c.moveToNext()) {
-                        arrayList.add(new Movie(
-                                new BigInteger(c.getString(c.getColumnIndex(MoviesProvider.MOVIE_DB_ID))),
-                                c.getString(c.getColumnIndex(MoviesProvider.TITLE)),
-                                new String(c.getString(c.getColumnIndex(MoviesProvider.POSTER_PATH))),
-                                c.getString(c.getColumnIndex(MoviesProvider.BACKDROP_PATH)),
-                                c.getString(c.getColumnIndex(MoviesProvider.OVERVIEW)),
-                                c.getString(c.getColumnIndex(MoviesProvider.RELEASE_DATE)),
-                                Double.parseDouble(c.getString(c.getColumnIndex(MoviesProvider.POPULARITY))),
-                                (c.getInt(c.getColumnIndex(MoviesProvider.IS_POPULAR))),
-                                (c.getInt(c.getColumnIndex(MoviesProvider.IS_TOP_RATED))),
-                                (c.getInt(c.getColumnIndex(MoviesProvider.IS_FAVORITE)))
+            if (c != null) {
+                while (c.moveToNext()) {
+                    arrayList.add(new Movie(
+                            new BigInteger(c.getString(c.getColumnIndex(MoviesProvider.MOVIE_DB_ID))),
+                            c.getString(c.getColumnIndex(MoviesProvider.TITLE)),
+                            new String(c.getString(c.getColumnIndex(MoviesProvider.POSTER_PATH))),
+                            c.getString(c.getColumnIndex(MoviesProvider.BACKDROP_PATH)),
+                            c.getString(c.getColumnIndex(MoviesProvider.OVERVIEW)),
+                            c.getString(c.getColumnIndex(MoviesProvider.RELEASE_DATE)),
+                            Double.parseDouble(c.getString(c.getColumnIndex(MoviesProvider.POPULARITY))),
+                            (c.getInt(c.getColumnIndex(MoviesProvider.IS_POPULAR))),
+                            (c.getInt(c.getColumnIndex(MoviesProvider.IS_TOP_RATED))),
+                            (c.getInt(c.getColumnIndex(MoviesProvider.IS_FAVORITE)))
 
-                        ));
-                    }
+                    ));
                 }
-            } finally {
-                c.close();
             }
 
             MoviesGridAdapter adapter = new MoviesGridAdapter(

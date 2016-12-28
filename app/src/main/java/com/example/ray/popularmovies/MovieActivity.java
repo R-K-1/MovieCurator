@@ -3,6 +3,7 @@ package com.example.ray.popularmovies;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -17,12 +18,7 @@ import android.widget.ToggleButton;
 
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
@@ -65,7 +61,7 @@ public class MovieActivity extends Activity {
                 MoviesProvider.DatabaseHelper y = new MoviesProvider.DatabaseHelper(getApplicationContext());
                 SQLiteDatabase db = y.getWritableDatabase();
                 ContentValues values = new ContentValues();
-                String uri = MoviesProvider.MOVIE_URL + movie.getmId();
+                String uri = MoviesProvider.MOVIE_URI + movie.getmId();
                 if (isChecked) {
                     isFavoriteButton.setBackgroundResource(R.drawable.star_on);
                     values.put(MoviesProvider.IS_FAVORITE, 1);
@@ -109,19 +105,20 @@ public class MovieActivity extends Activity {
     class GetTrailersJSON extends AsyncTask<String, Integer, String> {
 
         @Override
-        protected String doInBackground(String... params) {
+        protected String doInBackground(String... params) {/*
             String response = new String();
             try {
-                response = ApiCall.GET(mClient, RequestBuilder.buildGetTrailersURL(params[0]).toString());
+                response = ApiCall.GET(mClient, RequestBuilder.buildGetTrailersURI(params[0]).toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return response;
+            return response;*/
+            return params[0];
         }
 
         @Override
         protected void onPostExecute(String content) {
-            try {
+/*            try {
                 JSONObject jsonObject = new JSONObject(content);
                 JSONArray jsonArray =  jsonObject.getJSONArray("results");
 
@@ -133,7 +130,19 @@ public class MovieActivity extends Activity {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+            }*/
+
+            mTrailersURLs.clear();
+            Uri trailers = Uri.parse(MoviesProvider.GET_TRAILERS_URI + content);
+            Cursor c = getApplicationContext().getContentResolver().query(
+                    trailers, null, null, null, null);
+
+            if (c != null) {
+                while (c.moveToNext()) {
+                    mTrailersURLs.add(c.getString(c.getColumnIndex(MoviesProvider.KEY)));
+                }
             }
+
             TrailersListAdapter adapter = new TrailersListAdapter(
                     getApplicationContext(), R.id.movie_detail_trailers_list, mTrailersURLs
             );
