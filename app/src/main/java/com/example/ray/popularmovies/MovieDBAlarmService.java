@@ -78,23 +78,45 @@ public class MovieDBAlarmService extends IntentService {
             MoviesProvider.DatabaseHelper y = new MoviesProvider.DatabaseHelper(context);
             SQLiteDatabase db = y.getWritableDatabase();
 
-            // db.execSQL("DROP TABLE IF EXISTS " +  MOVIES_TABLE_NAME);
-            // db.execSQL(MoviesProvider.CREATE_DB_TABLE);
+/*            db.execSQL("DROP TABLE IF EXISTS " +  TRAILERS_TABLE_NAME);
+            db.execSQL(MoviesProvider.CREATE_TRAILERS_DB_TABLE);
+            db.execSQL("DROP TABLE IF EXISTS " +  REVIEWS_TABLE_NAME);
+            db.execSQL(MoviesProvider.CREATE_REVIEWS_DB_TABLE);
+            db.execSQL("DROP TABLE IF EXISTS " +  MOVIES_TABLE_NAME);
+            db.execSQL(MoviesProvider.CREATE_MOVIES_DB_TABLE);*/
             // Bulk insert movies into database
             for (int i = 0; i < popularMoviesArray.length(); i++) {
                 JSONObject m = popularMoviesArray.getJSONObject(i);
 
-                String imgURL = uri.build().toString() + m.getString("poster_path");
+                String responseTrailers = new String();
+                String responseReviews = new String();
+                String mId = m.getString("id");
+
+                try {
+                    responseTrailers = ApiCall.GET(x,
+                            RequestBuilder.buildGetTrailersURI(mId).toString());
+                    responseReviews += ApiCall.GET(x,
+                            RequestBuilder.buildGetReviewsURI(mId).toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                JSONObject movieTrailers = new JSONObject(responseTrailers);
+                JSONArray movieTrailersArray = movieTrailers.getJSONArray("results");
+                JSONObject movieReviews = new JSONObject(responseReviews);
+                JSONArray movieReviewsArray = movieReviews.getJSONArray("results");
+
+/*                String imgURL = uri.build().toString() + m.getString("poster_path");
                 Bitmap b;
                 try {
                     b = z.getBitmapFromCloud(context, imgURL);
                     z.saveBitmapToInternalStorage(context, b, m.getString("poster_path") );
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
+                }*/
 
                 values.clear();
-                values.put(MoviesProvider.MOVIE_DB_ID, m.getString("id"));
+                values.put(MoviesProvider.MOVIE_DB_ID, mId);
                 values.put(MoviesProvider.TITLE, m.getString("title"));
                 values.put(MoviesProvider.ORIGINAL_TITLE, m.getString("original_title"));
                 values.put(MoviesProvider.POSTER_PATH, m.getString("poster_path"));
@@ -106,10 +128,66 @@ public class MovieDBAlarmService extends IntentService {
                 values.put(MoviesProvider.IS_TOP_RATED, 0);
                 values.put(MoviesProvider.IS_FAVORITE, 0);
 
-                // getContentResolver().insert(MoviesProvider.CONTENT_URI, values);
+                // getContentResolver().insert(MoviesProvider.MOVIES_BASE_URI, values);
+                    ContentValues values2 = new ContentValues();
+
+                    for (int j = 0; j < movieTrailersArray.length(); j++) {
+                        try {
+                            JSONObject t = movieTrailersArray.getJSONObject(j);
+
+                            String key = t.get("key").toString();
+
+                            Uri.Builder posterThumbnail = new Uri.Builder();
+                            posterThumbnail.scheme("https")
+                                    .authority("img.youtube.com")
+                                    .appendPath("vi")
+                                    .appendPath(key)
+                                    .appendPath("0.jpg");
+
+
+                            // String trailerImgURL = posterThumbnail.build().toString() + m.getString("poster_path");
+                            Bitmap bm;
+                            try {
+                                bm = z.getBitmapFromCloud(context, posterThumbnail.build().toString());
+                                z.saveBitmapToInternalStorage(context, bm, (key + ".jpg") );
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            values2.clear();
+                            values2.put(MoviesProvider.FK_MOVIE_MOVIE_DB_ID, mId);
+                            values2.put(MoviesProvider.TRAILER_MOVIE_DB_ID, t.get("id").toString());
+                            values2.put(MoviesProvider.KEY, key);
+                            values2.put(MoviesProvider.NAME, t.get("name").toString());
+                            values2.put(MoviesProvider.SITE, t.get("site").toString());
+
+                            // getContentResolver().insert(MoviesProvider.INSERT_TRAILERS_URI, values2);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+
+                    for (int k = 0; k < movieReviewsArray.length(); k++) {
+                        values2.clear();
+                        try{
+                            JSONObject r = movieReviewsArray.getJSONObject(k);
+
+                            values2.clear();
+                            values2.put(MoviesProvider.FK_MOVIE_MOVIE_DB_ID, mId);
+                            values2.put(MoviesProvider.REVIEW_MOVIE_DB_ID, r.get("id").toString());
+                            values2.put(MoviesProvider.AUTHOR, r.get("author").toString());
+                            values2.put(MoviesProvider.CONTENT, r.get("content").toString());
+
+                            // getContentResolver().insert(MoviesProvider.INSERT_REVIEWS_URI, values2);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
             }
 
-            for (int i = 0; i < topRatedMoviesArray.length(); i++) {
+/*            for (int i = 0; i < topRatedMoviesArray.length(); i++) {
                 JSONObject m = topRatedMoviesArray.getJSONObject(i);
 
                 String imgURL = uri.build().toString() + m.getString("poster_path");
@@ -134,8 +212,8 @@ public class MovieDBAlarmService extends IntentService {
                 values.put(MoviesProvider.IS_TOP_RATED, 1);
                 values.put(MoviesProvider.IS_FAVORITE, 0);
 
-                // getContentResolver().insert(MoviesProvider.CONTENT_URI, values);
-            }
+                // getContentResolver().insert(MoviesProvider.MOVIES_BASE_URI, values);
+            }*/
 
 
         } catch (JSONException e) {

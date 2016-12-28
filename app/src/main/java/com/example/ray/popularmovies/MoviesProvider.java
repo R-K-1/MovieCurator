@@ -36,21 +36,55 @@ public class MoviesProvider extends ContentProvider {
     static final String IS_TOP_RATED = "isTopRated";
     static final String IS_FAVORITE = "isFavorite";
 
+    static final String FK_MOVIE_MOVIE_DB_ID = "FKMovieMovieDBId";
+    static final String TRAILER_MOVIE_DB_ID = "TrailerMovieDBId";
+    static final String KEY = "Key";
+    static final String NAME = "Name";
+    static final String SITE = "Site";
+
+    static final String REVIEW_MOVIE_DB_ID = "ReviewMovieDBId";
+    static final String AUTHOR = "Author";
+    static final String CONTENT = "Content";
 
     private static HashMap<String, String> MOVIES_PROJECTION_MAP;
+    private static HashMap<String, String> TRAILERS_PROJECTION_MAP;
+    private static HashMap<String, String> REVIEWS_PROJECTION_MAP;
 
     static final int MOVIES = 1;
     static final int MOVIE_ID = 2;
+    static final int TRAILERS = 3;
+    static final int REVIEWS = 4;
+    static final int MOVIE_TRAILERS = 5;
+    static final int MOVIE_REVIEWS = 6;
+    static final int FAVORITE_MOVIES_ID = 7;
+    static final int POPULAR_MOVIES_ID = 8;
+    static final int TOP_RATED_MOVIES_ID = 9;
 
-    static final String URL = "content://" + PROVIDER_NAME + "/movies";
-    static final Uri CONTENT_URI = Uri.parse(URL);
-    static final String MOVIE_URL = "content://" + PROVIDER_NAME + "/movies/";
+    static final String BASE = "content://" + PROVIDER_NAME;
+    static final Uri BASE_URI = Uri.parse(BASE);
+    static final String MOVIES_BASE = "content://" + PROVIDER_NAME + "/movies";
+    static final Uri MOVIES_BASE_URI = Uri.parse(MOVIES_BASE);
+    static final String MOVIE_URI = MOVIES_BASE + "/";
+    static final Uri FAVORITE_MOVIES_URI = Uri.parse(MOVIES_BASE + "/favorites");
+    static final Uri INSERT_TRAILERS_URI = Uri.parse(BASE + "/trailers");
+    static final String GET_TRAILERS_URI = BASE + "/trailers/";
+    static final Uri INSERT_REVIEWS_URI = Uri.parse(BASE + "/reviews");
+    static final String GET_REVIEWS_URI = BASE + "/reviews/";
+
+
 
     static final UriMatcher uriMatcher;
     static{
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(PROVIDER_NAME, "movies", MOVIES);
         uriMatcher.addURI(PROVIDER_NAME, "movies/#", MOVIE_ID);
+        uriMatcher.addURI(PROVIDER_NAME, "movies/favorites", FAVORITE_MOVIES_ID);
+        uriMatcher.addURI(PROVIDER_NAME, "movies/popular", POPULAR_MOVIES_ID);
+        uriMatcher.addURI(PROVIDER_NAME, "movies/toprated", TOP_RATED_MOVIES_ID);
+        uriMatcher.addURI(PROVIDER_NAME, "trailers", TRAILERS);
+        uriMatcher.addURI(PROVIDER_NAME, "reviews", REVIEWS);
+        uriMatcher.addURI(PROVIDER_NAME, "trailers/#", MOVIE_TRAILERS);
+        uriMatcher.addURI(PROVIDER_NAME, "reviews/#", MOVIE_REVIEWS);
     }
 
     /**
@@ -60,10 +94,8 @@ public class MoviesProvider extends ContentProvider {
     private SQLiteDatabase db;
     static final String DATABASE_NAME = "Movies.db";
     static final String MOVIES_TABLE_NAME = "movies";
-    static final String TRAILERS_TABLE_NAME = "movies";
-    static final String COMMENT_TABLE_NAME = "movies";
-    static final int DATABASE_VERSION = 2;
-    static final String CREATE_DB_TABLE =
+    static final int DATABASE_VERSION = 3;
+    static final String CREATE_MOVIES_DB_TABLE =
             " CREATE TABLE " + MOVIES_TABLE_NAME +
                     " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     " movieDBId TEXT NOT NULL, " +
@@ -78,19 +110,24 @@ public class MoviesProvider extends ContentProvider {
                     " isTopRated INTEGER, " +
                     " isFavorite INTEGER);";
 
-    /*static final String CREATE_DB_TABLE =
-            " CREATE TABLE " + MOVIES_TABLE_NAME +
-                    " (movieDBId TEXT NOT NULL, " +
-                    " title TEXT NOT NULL, " +
-                    " originalTitle TEXT, " +
-                    " posterPath TEXT, " +
-                    " backdropPath TEXT, " +
-                    " overview TEXT, " +
-                    " releaseDate TEXT, " +
-                    " popularity TEXT, " +
-                    " isPopular INTEGER, " +
-                    " isTopRated INTEGER, " +
-                    " isFavorite INTEGER);";*/
+    static final String TRAILERS_TABLE_NAME = "trailers";
+    static final String CREATE_TRAILERS_DB_TABLE =
+            " CREATE TABLE " + TRAILERS_TABLE_NAME +
+                    " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    " TrailerMovieDBId TEXT NOT NULL, " +
+                    " Key TEXT NOT NULL, " +
+                    " Name TEXT, " +
+                    " Site TEXT, " +
+                    " FKMovieMovieDBId TEXT);";
+
+    static final String REVIEWS_TABLE_NAME = "reviews";
+    static final String CREATE_REVIEWS_DB_TABLE =
+            " CREATE TABLE " + REVIEWS_TABLE_NAME +
+                    " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    " ReviewMovieDBId TEXT NOT NULL, " +
+                    " Author TEXT, " +
+                    " Content TEXT NOT NULL, " +
+                    " FKMovieMovieDBId TEXT);";
 
     /**
      * Helper class that actually creates and manages
@@ -104,7 +141,7 @@ public class MoviesProvider extends ContentProvider {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(CREATE_DB_TABLE);
+            db.execSQL(CREATE_MOVIES_DB_TABLE);
         }
 
         @Override
@@ -134,13 +171,27 @@ public class MoviesProvider extends ContentProvider {
         /**
          * Add a new movie record
          */
-        long rowID = db.insert(	MOVIES_TABLE_NAME, "", values);
+        // long rowID = db.insert(	MOVIES_TABLE_NAME, "", values);
+        long rowID = 0;
 
+        switch (uriMatcher.match(uri)) {
+            case MOVIES:
+                rowID = db.insert(	MOVIES_TABLE_NAME, "", values);
+                break;
+
+            case TRAILERS:
+                rowID = db.insert(	TRAILERS_TABLE_NAME, "", values);
+                break;
+
+            case REVIEWS:
+                rowID = db.insert(	REVIEWS_TABLE_NAME, "", values);
+                break;
+        }
         /**
          * If record is added successfully
          */
         if (rowID > 0) {
-            Uri _uri = ContentUris.withAppendedId(CONTENT_URI, rowID);
+            Uri _uri = ContentUris.withAppendedId(MOVIES_BASE_URI, rowID);
             getContext().getContentResolver().notifyChange(_uri, null);
             return _uri;
         }
@@ -152,19 +203,28 @@ public class MoviesProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection,
                         String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        qb.setTables(MOVIES_TABLE_NAME);
 
         switch (uriMatcher.match(uri)) {
             case MOVIES:
+                qb.setTables(MOVIES_TABLE_NAME);
                 qb.setProjectionMap(MOVIES_PROJECTION_MAP);
                 break;
 
             case MOVIE_ID:
+                qb.setTables(MOVIES_TABLE_NAME);
                 qb.appendWhere( _ID + "=" + uri.getPathSegments().get(1));
                 break;
 
-            default:
-                qb.setProjectionMap(MOVIES_PROJECTION_MAP);
+            case MOVIE_TRAILERS:
+                qb.setTables(TRAILERS_TABLE_NAME);
+                qb.appendWhere( FK_MOVIE_MOVIE_DB_ID + "=" + uri.getPathSegments().get(1));
+                // qb.setProjectionMap(TRAILERS_PROJECTION_MAP);
+                break;
+
+            case MOVIE_REVIEWS:
+                qb.setTables(REVIEWS_TABLE_NAME);
+                qb.appendWhere( FK_MOVIE_MOVIE_DB_ID + "=" + uri.getPathSegments().get(1));
+                // qb.setProjectionMap(REVIEWS_PROJECTION_MAP);
                 break;
         }
 
@@ -217,9 +277,6 @@ public class MoviesProvider extends ContentProvider {
                 break;
 
             case MOVIE_ID:
-                /*count = db.update(MOVIES_TABLE_NAME, values,
-                        _ID + " = " + uri.getPathSegments().get(1) +
-                                (!TextUtils.isEmpty(selection) ? " AND (" +selection + ')' : ""), selectionArgs);*/
                 count = db.update(MOVIES_TABLE_NAME, values,
                     MOVIE_DB_ID + " = " + uri.getPathSegments().get(1), selectionArgs);
                 break;
