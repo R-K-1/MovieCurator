@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
         Stetho.initializeWithDefaults(this);
 
+        scheduleAlarm();
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -45,8 +47,6 @@ public class MainActivity extends AppCompatActivity {
         client = new OkHttpClient.Builder()
                 .addNetworkInterceptor(new StethoInterceptor())
                 .build();
-
-        scheduleAlarm();
 
         // Pass the settings flags by inserting them in a bundle
 /*        Bundle settingsBundle = new Bundle();

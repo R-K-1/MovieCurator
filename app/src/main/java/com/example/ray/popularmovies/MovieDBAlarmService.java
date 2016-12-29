@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -85,6 +86,26 @@ public class MovieDBAlarmService extends IntentService {
             db.execSQL("DROP TABLE IF EXISTS " +  MOVIES_TABLE_NAME);
             db.execSQL(MoviesProvider.CREATE_MOVIES_DB_TABLE);*/
             // Bulk insert movies into database
+            db.execSQL(MoviesProvider.DELETE_NONFAVORITE_REVIEWS);
+
+            Cursor cdt = db.rawQuery(MoviesProvider.SELECT_FILENAME_NONFAVORITE_TRAILERS, null);
+            if (cdt != null) {
+                while (cdt.moveToNext()) {
+                    String fileName = cdt.getString(cdt.getColumnIndex(MoviesProvider.KEY)) + ".jpg";
+                    z.deleteImageFromInternalStorage(context, imgDir, fileName);
+                }
+            }
+            db.execSQL(MoviesProvider.DELETE_NONFAVORITE_TRAILERS);
+
+            Cursor cdm = db.rawQuery(MoviesProvider.SELECT_FILENAME_NONFAVORITE_POSTERS, null);
+            if (cdm != null) {
+                while (cdm.moveToNext()) {
+                    String fileName = cdm.getString(cdm.getColumnIndex(MoviesProvider.POSTER_PATH));
+                    z.deleteImageFromInternalStorage(context, imgDir, fileName);
+                }
+            }
+            db.execSQL(MoviesProvider.DELETE_NONFAVORITE_MOVIES);
+
             for (int i = 0; i < popularMoviesArray.length(); i++) {
                 JSONObject m = popularMoviesArray.getJSONObject(i);
 
@@ -106,14 +127,14 @@ public class MovieDBAlarmService extends IntentService {
                 JSONObject movieReviews = new JSONObject(responseReviews);
                 JSONArray movieReviewsArray = movieReviews.getJSONArray("results");
 
-/*                String imgURL = uri.build().toString() + m.getString("poster_path");
+                String imgURL = uri.build().toString() + m.getString("poster_path");
                 Bitmap b;
                 try {
                     b = z.getBitmapFromCloud(context, imgURL);
                     z.saveBitmapToInternalStorage(context, b, m.getString("poster_path") );
                 } catch (IOException e) {
                     e.printStackTrace();
-                }*/
+                }
 
                 values.clear();
                 values.put(MoviesProvider.MOVIE_DB_ID, mId);
@@ -128,7 +149,7 @@ public class MovieDBAlarmService extends IntentService {
                 values.put(MoviesProvider.IS_TOP_RATED, 0);
                 values.put(MoviesProvider.IS_FAVORITE, 0);
 
-                // getContentResolver().insert(MoviesProvider.MOVIES_BASE_URI, values);
+                getContentResolver().insert(MoviesProvider.MOVIES_BASE_URI, values);
                     ContentValues values2 = new ContentValues();
 
                     for (int j = 0; j < movieTrailersArray.length(); j++) {
@@ -145,7 +166,7 @@ public class MovieDBAlarmService extends IntentService {
                                     .appendPath("0.jpg");
 
 
-                            // String trailerImgURL = posterThumbnail.build().toString() + m.getString("poster_path");
+                            String trailerImgURL = posterThumbnail.build().toString() + m.getString("poster_path");
                             Bitmap bm;
                             try {
                                 bm = z.getBitmapFromCloud(context, posterThumbnail.build().toString());
@@ -161,7 +182,7 @@ public class MovieDBAlarmService extends IntentService {
                             values2.put(MoviesProvider.NAME, t.get("name").toString());
                             values2.put(MoviesProvider.SITE, t.get("site").toString());
 
-                            // getContentResolver().insert(MoviesProvider.INSERT_TRAILERS_URI, values2);
+                            getContentResolver().insert(MoviesProvider.INSERT_TRAILERS_URI, values2);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -179,7 +200,7 @@ public class MovieDBAlarmService extends IntentService {
                             values2.put(MoviesProvider.AUTHOR, r.get("author").toString());
                             values2.put(MoviesProvider.CONTENT, r.get("content").toString());
 
-                            // getContentResolver().insert(MoviesProvider.INSERT_REVIEWS_URI, values2);
+                            getContentResolver().insert(MoviesProvider.INSERT_REVIEWS_URI, values2);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

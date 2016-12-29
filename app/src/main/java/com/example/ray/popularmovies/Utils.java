@@ -102,4 +102,15 @@ public class Utils {
         return myImageFile;
 
     }
+
+    public void deleteImageFromInternalStorage (Context context, String imageDir, String imageName) {
+        ContextWrapper cw = new ContextWrapper(context);
+        File directory = cw.getDir("My Movie Curator", Context.MODE_PRIVATE);
+        File myImageFile = new File(directory, imageName);
+        if (myImageFile.delete()) {
+            Log.i("image", "deleted " + imageName);
+        } else {
+            Log.i("image", "could not delete " + imageName);
+        }
+    }
 }
