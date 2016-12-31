@@ -39,3 +39,15 @@ dependencies {
     compile 'com.facebook.stetho:stetho-okhttp3:1.4.1'
     testCompile 'junit:junit:4.12'
 }
+
+sourceSets {
+    main {
+        resources.srcDirs =
+                [
+                        'src/main/res/layout',
+                        'src/main/res/layout-large',
+                        'src/main/res'
+                ]
+    }
+
+}

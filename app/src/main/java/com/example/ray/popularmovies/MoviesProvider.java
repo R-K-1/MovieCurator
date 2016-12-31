@@ -97,7 +97,7 @@ public class MoviesProvider extends ContentProvider {
     static final int DATABASE_VERSION = 3;
 
     static final String CREATE_MOVIES_DB_TABLE =
-            " CREATE TABLE " + MOVIES_TABLE_NAME +
+            " CREATE TABLE IF NOT EXISTS " + MOVIES_TABLE_NAME +
                     " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     " movieDBId TEXT NOT NULL, " +
                     " title TEXT NOT NULL, " +
@@ -120,7 +120,7 @@ public class MoviesProvider extends ContentProvider {
 
     static final String TRAILERS_TABLE_NAME = "trailers";
     static final String CREATE_TRAILERS_DB_TABLE =
-            " CREATE TABLE " + TRAILERS_TABLE_NAME +
+            " CREATE TABLE IF NOT EXISTS " + TRAILERS_TABLE_NAME +
                     " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     " TrailerMovieDBId TEXT NOT NULL, " +
                     " Key TEXT NOT NULL, " +
@@ -136,7 +136,7 @@ public class MoviesProvider extends ContentProvider {
 
     static final String REVIEWS_TABLE_NAME = "reviews";
     static final String CREATE_REVIEWS_DB_TABLE =
-            " CREATE TABLE " + REVIEWS_TABLE_NAME +
+            " CREATE TABLE IF NOT EXISTS " + REVIEWS_TABLE_NAME +
                     " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     " ReviewMovieDBId TEXT NOT NULL, " +
                     " Author TEXT, " +
@@ -229,7 +229,7 @@ public class MoviesProvider extends ContentProvider {
 
             case MOVIE_ID:
                 qb.setTables(MOVIES_TABLE_NAME);
-                qb.appendWhere( _ID + "=" + uri.getPathSegments().get(1));
+                qb.appendWhere( MOVIE_DB_ID + "=" + uri.getPathSegments().get(1));
                 break;
 
             case MOVIE_TRAILERS:

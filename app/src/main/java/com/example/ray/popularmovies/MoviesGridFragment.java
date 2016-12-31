@@ -1,11 +1,11 @@
 package com.example.ray.popularmovies;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,26 +20,54 @@ import java.util.ArrayList;
 import okhttp3.OkHttpClient;
 
 /**
- * A placeholder fragment containing a simple view.
+ * Created by Ray on 12/29/2016.
  */
-// public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-public class MainActivityFragment extends Fragment {
 
+public class MoviesGridFragment extends Fragment {
 
     ArrayList<Movie> arrayList;
-    GridView gridView;
+    GridView v;
     private OkHttpClient client;
+    private communicate cm;
 
     private MoviesGridAdapter mMoviesAdapter;
-
-    public MainActivityFragment() {
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        // return inflater.inflate(R.layout.movies_gridview, container, false);
+        // View v = inflater.inflate(R.layout.movies_gridview, container, false);
+        // GridView v = (GridView) inflater.inflate(R.layout.movies_gridview, container, false);
+        v = (GridView) inflater.inflate(R.layout.movies_gridview, container, false);
+        // GridView moviesGrid = (GridView)v.findViewById(R.id.movies_Gridview);
+        v.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                // Send intent to SingleViewActivity
+                Intent i = new Intent(getActivity().getApplicationContext(), MovieActivity.class);
+                // Pass image index
+                i.putExtra("SelectedMovie",(Parcelable) arrayList.get(position));
+                // cm.sendData();
+                // startActivity(i);
+                MovieDetailsFragment movieDetailsFragment =
+                        (MovieDetailsFragment) getFragmentManager().findFragmentById(R.id.movie_detail_in_fragment);
+
+                if (movieDetailsFragment != null) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("movieId", arrayList.get(position).getmId().toString());
+                    movieDetailsFragment.setArguments(bundle);
+                    movieDetailsFragment.updateMovieDetails(arrayList.get(position).getmId().toString());
+                } else {
+                    // i.putExtra("SelectedMovie",(Parcelable) arrayList.get(position));
+                    i.putExtra("movieId", arrayList.get(position).getmId());
+                    // cm.sendData();
+                    startActivity(i);
+                }
+            }
+        });
+
+        return v;
 
     }
 
@@ -56,20 +84,13 @@ public class MainActivityFragment extends Fragment {
                 .addNetworkInterceptor(new StethoInterceptor())
                 .build();
 
-        gridView = (GridView) getView().findViewById(R.id.movies_Grid);
-
+        // gridView = (GridView) getView().findViewById(R.id.movies_Grid);
+        // gridView = (GridView) getView().findViewById(R.id.movies_gridview_inside_movies_gridview);
         new GetMoviesFromDB().execute("popular");
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                // Send intent to SingleViewActivity
-                Intent i = new Intent(getActivity().getApplicationContext(), MovieActivity.class);
-                // Pass image index
-                i.putExtra("SelectedMovie",(Parcelable) arrayList.get(position));
-                startActivity(i);
-            }
-        });
+        /*if (gridView == null) {
+            gridView = getActivity().getLayoutInflater().inflate(R.layout.)
+        }*/
     }
 
     public class GetMoviesFromDB extends AsyncTask<String, Integer, String> {
@@ -99,13 +120,12 @@ public class MainActivityFragment extends Fragment {
                             (c.getInt(c.getColumnIndex(MoviesProvider.IS_POPULAR))),
                             (c.getInt(c.getColumnIndex(MoviesProvider.IS_TOP_RATED))),
                             (c.getInt(c.getColumnIndex(MoviesProvider.IS_FAVORITE)))
-
                     ));
                 }
             }
 
             MoviesGridAdapter adapter = new MoviesGridAdapter(
-                   getActivity().getApplicationContext(), R.layout.movies_list_item, arrayList
+                    getActivity().getApplicationContext(), R.layout.movies_list_item, arrayList
             );
 
             // TODO: CursorAdaptor Implemention
@@ -113,7 +133,7 @@ public class MainActivityFragment extends Fragment {
                     MoviesProvider.MOVIES_BASE_URI, null, null, null, null);
             MoviesGridAdapter adapter = new MoviesGridAdapter(
                     getActivity().getApplicationContext(), c2);*/
-            gridView.setAdapter(adapter);
+            v.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }
     }

@@ -44,7 +44,9 @@ public class MovieActivity extends Activity {
         // Get intent data
         Intent i = getIntent();
 
-        final Movie movie = (Movie) i.getParcelableExtra("SelectedMovie");
+        Bundle extras = getIntent().getExtras();
+        final Movie movie = utils.getMovieFromDB(extras.get("movieId").toString(), this);
+
 
         ImageView imageView = (ImageView) findViewById(R.id.movie_detail_poster);
         File imageFile = utils.getImageFromInternalStorage(getApplicationContext(), "", movie.getmPosterPath());
@@ -105,35 +107,9 @@ public class MovieActivity extends Activity {
     class GetTrailersJSON extends AsyncTask<String, Integer, String> {
 
         @Override
-        protected String doInBackground(String... params) {/*
-            String response = new String();
-            try {
-                response = ApiCall.GET(mClient, RequestBuilder.buildGetTrailersURI(params[0]).toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return response;*/
-            return params[0];
-        }
-
-        @Override
-        protected void onPostExecute(String content) {
-/*            try {
-                JSONObject jsonObject = new JSONObject(content);
-                JSONArray jsonArray =  jsonObject.getJSONArray("results");
-
-                mTrailersURLs.clear();
-                for(int i =0;i<jsonArray.length(); i++){
-                    JSONObject trailer = jsonArray.getJSONObject(i);
-
-                    mTrailersURLs.add(trailer.getString("key"));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }*/
-
+        protected String doInBackground(String... params) {
             mTrailersURLs.clear();
-            Uri trailers = Uri.parse(MoviesProvider.GET_TRAILERS_URI + content);
+            Uri trailers = Uri.parse(MoviesProvider.GET_TRAILERS_URI + params[0]);
             Cursor c = getApplicationContext().getContentResolver().query(
                     trailers, null, null, null, null);
 
@@ -142,7 +118,11 @@ public class MovieActivity extends Activity {
                     mTrailersURLs.add(c.getString(c.getColumnIndex(MoviesProvider.KEY)));
                 }
             }
+            return "";
+        }
 
+        @Override
+        protected void onPostExecute(String content) {
             TrailersListAdapter adapter = new TrailersListAdapter(
                     getApplicationContext(), R.id.movie_detail_trailers_list, mTrailersURLs
             );

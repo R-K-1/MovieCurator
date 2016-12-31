@@ -16,7 +16,8 @@ import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import okhttp3.OkHttpClient;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements communicate{
+// public class MainActivity extends FragmentActivity {
 
     private OkHttpClient client;
 
@@ -38,10 +39,12 @@ public class MainActivity extends AppCompatActivity {
 
         Stetho.initializeWithDefaults(this);
 
-        scheduleAlarm();
+        // scheduleAlarm();
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        // setSupportActionBar(toolbar);
+        // AppCompatActivity ap = (AppCompatActivity) getCallingActivity();
         setSupportActionBar(toolbar);
 
         client = new OkHttpClient.Builder()
@@ -108,6 +111,10 @@ public class MainActivity extends AppCompatActivity {
         // Interval can be INTERVAL_FIFTEEN_MINUTES, INTERVAL_HALF_HOUR, INTERVAL_HOUR, INTERVAL_DAY
         alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, firstMillis,
                 AlarmManager.INTERVAL_FIFTEEN_MINUTES, pIntent);
+    }
+
+    public void sendData() {
+
     }
 
 }

@@ -25,17 +25,26 @@
     <include layout="@layout/content_main" />
 -->
 
-    <FrameLayout
+    <LinearLayout
+        android:weightSum="10"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <fragment
             class="com.example.ray.popularmovies.MoviesGridFragment"
             android:id="@+id/movies_grid_in_fragment"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_weight="5"
             tools:layout="@layout/movies_gridview"/>
 
-    </FrameLayout>
+        <fragment
+            class="com.example.ray.popularmovies.MovieDetailsFragment"
+            android:id="@+id/movie_detail_in_fragment"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="5"/>
+
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

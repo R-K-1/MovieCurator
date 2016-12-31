@@ -1,7 +1,10 @@
 package com.example.ray.popularmovies;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -13,6 +16,7 @@ import com.squareup.picasso.Target;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 
 /**
  * Created by Ray on 12/24/2016.
@@ -112,5 +116,29 @@ public class Utils {
         } else {
             Log.i("image", "could not delete " + imageName);
         }
+    }
+
+    public Movie getMovieFromDB (String movieId, Activity activity) {
+        MoviesProvider.DatabaseHelper y = new MoviesProvider.DatabaseHelper(activity.getApplicationContext());
+        SQLiteDatabase db = y.getReadableDatabase();
+        Uri uri = Uri.parse(MoviesProvider.MOVIE_URI + movieId);
+        Cursor c = activity.getApplicationContext().getContentResolver().query(
+                uri, null, null, null, null);
+        Movie m;
+        c.moveToFirst();
+        m = new Movie(
+                new BigInteger(c.getString(c.getColumnIndex(MoviesProvider.MOVIE_DB_ID))),
+                c.getString(c.getColumnIndex(MoviesProvider.TITLE)),
+                new String(c.getString(c.getColumnIndex(MoviesProvider.POSTER_PATH))),
+                c.getString(c.getColumnIndex(MoviesProvider.BACKDROP_PATH)),
+                c.getString(c.getColumnIndex(MoviesProvider.OVERVIEW)),
+                c.getString(c.getColumnIndex(MoviesProvider.RELEASE_DATE)),
+                Double.parseDouble(c.getString(c.getColumnIndex(MoviesProvider.POPULARITY))),
+                (c.getInt(c.getColumnIndex(MoviesProvider.IS_POPULAR))),
+                (c.getInt(c.getColumnIndex(MoviesProvider.IS_TOP_RATED))),
+                (c.getInt(c.getColumnIndex(MoviesProvider.IS_FAVORITE)))
+        );
+
+        return m;
     }
 }
