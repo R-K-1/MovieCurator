@@ -57,6 +57,7 @@ public class MovieActivity extends Activity {
         int currentState = movie.ismInFavorites();
         int x = movie.ismInFavorites() == 1? R.drawable.star_on: R.drawable.star_off;
         isFavoriteButton.setBackgroundResource(x);
+        isFavoriteButton.setVisibility(View.VISIBLE);
         isFavoriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

@@ -1,11 +1,11 @@
 package com.example.ray.popularmovies;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,24 +44,31 @@ public class MoviesGridFragment extends Fragment {
         v.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                // Send intent to SingleViewActivity
-                Intent i = new Intent(getActivity().getApplicationContext(), MovieActivity.class);
-                // Pass image index
-                i.putExtra("SelectedMovie",(Parcelable) arrayList.get(position));
-                // cm.sendData();
-                // startActivity(i);
+                String movieId = arrayList.get(position).getmId().toString();
                 MovieDetailsFragment movieDetailsFragment =
                         (MovieDetailsFragment) getFragmentManager().findFragmentById(R.id.movie_detail_in_fragment);
 
                 if (movieDetailsFragment != null) {
-                    Bundle bundle = new Bundle();
+                    MovieDetailsFragment newMovieDetailsFragment = new MovieDetailsFragment();
+                    newMovieDetailsFragment.setMovieIdGlobal(movieId);
+                    // FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
+                    FragmentTransaction ft = movieDetailsFragment.getActivity().getFragmentManager().beginTransaction();
+                    ft.replace(R.id.layout1, newMovieDetailsFragment);
+                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                    ft.addToBackStack(null);
+                    ft.commit();
+                    /*Bundle bundle = new Bundle();
                     bundle.putString("movieId", arrayList.get(position).getmId().toString());
-                    movieDetailsFragment.setArguments(bundle);
-                    movieDetailsFragment.updateMovieDetails(arrayList.get(position).getmId().toString());
+                    if (movieDetailsFragment.getArguments() == null) {
+                        movieDetailsFragment.setArguments(bundle);
+                    } else {
+                        movieDetailsFragment.getArguments().putAll(bundle);
+                    }
+                    movieDetailsFragment.getArguments().putAll(bundle);*/
+                    movieDetailsFragment.updateMovieDetails(movieId);
                 } else {
-                    // i.putExtra("SelectedMovie",(Parcelable) arrayList.get(position));
-                    i.putExtra("movieId", arrayList.get(position).getmId());
-                    // cm.sendData();
+                    Intent i = new Intent(getActivity().getApplicationContext(), MovieActivity.class);
+                    i.putExtra("movieId", movieId);
                     startActivity(i);
                 }
             }

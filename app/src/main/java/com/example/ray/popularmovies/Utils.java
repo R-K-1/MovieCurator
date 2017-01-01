@@ -124,20 +124,35 @@ public class Utils {
         Uri uri = Uri.parse(MoviesProvider.MOVIE_URI + movieId);
         Cursor c = activity.getApplicationContext().getContentResolver().query(
                 uri, null, null, null, null);
-        Movie m;
-        c.moveToFirst();
-        m = new Movie(
-                new BigInteger(c.getString(c.getColumnIndex(MoviesProvider.MOVIE_DB_ID))),
-                c.getString(c.getColumnIndex(MoviesProvider.TITLE)),
-                new String(c.getString(c.getColumnIndex(MoviesProvider.POSTER_PATH))),
-                c.getString(c.getColumnIndex(MoviesProvider.BACKDROP_PATH)),
-                c.getString(c.getColumnIndex(MoviesProvider.OVERVIEW)),
-                c.getString(c.getColumnIndex(MoviesProvider.RELEASE_DATE)),
-                Double.parseDouble(c.getString(c.getColumnIndex(MoviesProvider.POPULARITY))),
-                (c.getInt(c.getColumnIndex(MoviesProvider.IS_POPULAR))),
-                (c.getInt(c.getColumnIndex(MoviesProvider.IS_TOP_RATED))),
-                (c.getInt(c.getColumnIndex(MoviesProvider.IS_FAVORITE)))
+
+        Movie m = new Movie(
+                new BigInteger("1"),
+                activity.getString(R.string.stub_movie_title),
+                "",
+                "",
+                "",
+                "",
+                1.0,
+                0,
+                0,
+                0
         );
+
+        if (c != null && c.getCount() ==1) {
+            c.moveToFirst();
+            m = new Movie(
+                    new BigInteger(c.getString(c.getColumnIndex(MoviesProvider.MOVIE_DB_ID))),
+                    c.getString(c.getColumnIndex(MoviesProvider.TITLE)),
+                    new String(c.getString(c.getColumnIndex(MoviesProvider.POSTER_PATH))),
+                    c.getString(c.getColumnIndex(MoviesProvider.BACKDROP_PATH)),
+                    c.getString(c.getColumnIndex(MoviesProvider.OVERVIEW)),
+                    c.getString(c.getColumnIndex(MoviesProvider.RELEASE_DATE)),
+                    Double.parseDouble(c.getString(c.getColumnIndex(MoviesProvider.POPULARITY))),
+                    (c.getInt(c.getColumnIndex(MoviesProvider.IS_POPULAR))),
+                    (c.getInt(c.getColumnIndex(MoviesProvider.IS_TOP_RATED))),
+                    (c.getInt(c.getColumnIndex(MoviesProvider.IS_FAVORITE)))
+            );
+        }
 
         return m;
     }

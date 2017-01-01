@@ -116,7 +116,7 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
             SQLiteDatabase db = y.getWritableDatabase();
 
             db.execSQL("DROP TABLE IF EXISTS " +  MOVIES_TABLE_NAME);
-            db.execSQL(MoviesProvider.CREATE_DB_TABLE);
+            db.execSQL(MoviesProvider.CREATE_MOVIES_DB_TABLE);
 
 
             ContentValues values = new ContentValues();
@@ -143,7 +143,7 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
                 values.put(MoviesProvider.IS_TOP_RATED, 0);
                 values.put(MoviesProvider.IS_FAVORITE, 0);
 
-                getContext().getContentResolver().insert(MoviesProvider.CONTENT_URI, values);
+                getContext().getContentResolver().insert(MoviesProvider.MOVIES_BASE_URI, values);
             }
 
             // Bulk insert movies into database
@@ -169,7 +169,7 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
                 values.put(MoviesProvider.IS_TOP_RATED, 1);
                 values.put(MoviesProvider.IS_FAVORITE, 0);
 
-                getContext().getContentResolver().insert(MoviesProvider.CONTENT_URI, values);
+                getContext().getContentResolver().insert(MoviesProvider.MOVIES_BASE_URI, values);
             }
 
         } catch (JSONException e) {
