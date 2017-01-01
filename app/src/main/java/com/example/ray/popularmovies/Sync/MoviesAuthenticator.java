@@ -1,4 +1,4 @@
-package com.example.ray.popularmovies;
+package com.example.ray.popularmovies.Sync;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;

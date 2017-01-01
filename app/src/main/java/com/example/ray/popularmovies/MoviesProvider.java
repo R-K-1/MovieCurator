@@ -21,55 +21,55 @@ import java.util.HashMap;
 
 public class MoviesProvider extends ContentProvider {
 
-    static final String PROVIDER_NAME = "com.example.ray.popularmovies";
+    public static final String PROVIDER_NAME = "com.example.ray.popularmovies";
 
-    static final String _ID = "_id";
-    static final String MOVIE_DB_ID = "movieDBId";
-    static final String TITLE = "title";
-    static final String ORIGINAL_TITLE = "originalTitle";
-    static final String POSTER_PATH = "posterPath";
-    static final String BACKDROP_PATH = "backdropPath";
-    static final String OVERVIEW = "overview";
-    static final String RELEASE_DATE = "releaseDate";
-    static final String POPULARITY = "popularity";
-    static final String IS_POPULAR = "isPopular";
-    static final String IS_TOP_RATED = "isTopRated";
-    static final String IS_FAVORITE = "isFavorite";
+    public static final String _ID = "_id";
+    public static final String MOVIE_DB_ID = "movieDBId";
+    public static final String TITLE = "title";
+    public static final String ORIGINAL_TITLE = "originalTitle";
+    public static final String POSTER_PATH = "posterPath";
+    public static final String BACKDROP_PATH = "backdropPath";
+    public static final String OVERVIEW = "overview";
+    public static final String RELEASE_DATE = "releaseDate";
+    public static final String POPULARITY = "popularity";
+    public static final String IS_POPULAR = "isPopular";
+    public static final String IS_TOP_RATED = "isTopRated";
+    public static final String IS_FAVORITE = "isFavorite";
 
-    static final String FK_MOVIE_MOVIE_DB_ID = "FKMovieMovieDBId";
-    static final String TRAILER_MOVIE_DB_ID = "TrailerMovieDBId";
-    static final String KEY = "Key";
-    static final String NAME = "Name";
-    static final String SITE = "Site";
+    public static final String FK_MOVIE_MOVIE_DB_ID = "FKMovieMovieDBId";
+    public static final String TRAILER_MOVIE_DB_ID = "TrailerMovieDBId";
+    public static final String KEY = "Key";
+    public static final String NAME = "Name";
+    public static final String SITE = "Site";
 
-    static final String REVIEW_MOVIE_DB_ID = "ReviewMovieDBId";
-    static final String AUTHOR = "Author";
-    static final String CONTENT = "Content";
+    public static final String REVIEW_MOVIE_DB_ID = "ReviewMovieDBId";
+    public static final String AUTHOR = "Author";
+    public static final String CONTENT = "Content";
 
     private static HashMap<String, String> MOVIES_PROJECTION_MAP;
     private static HashMap<String, String> TRAILERS_PROJECTION_MAP;
     private static HashMap<String, String> REVIEWS_PROJECTION_MAP;
 
-    static final int MOVIES = 1;
-    static final int MOVIE_ID = 2;
-    static final int TRAILERS = 3;
-    static final int REVIEWS = 4;
-    static final int MOVIE_TRAILERS = 5;
-    static final int MOVIE_REVIEWS = 6;
-    static final int FAVORITE_MOVIES_ID = 7;
-    static final int POPULAR_MOVIES_ID = 8;
-    static final int TOP_RATED_MOVIES_ID = 9;
+    public static final int MOVIES = 1;
+    public static final int MOVIE_ID = 2;
+    public static final int TRAILERS = 3;
+    public static final int REVIEWS = 4;
+    public static final int MOVIE_TRAILERS = 5;
+    public static final int MOVIE_REVIEWS = 6;
+    public static final int FAVORITE_MOVIES_ID = 7;
+    public  static final int POPULAR_MOVIES_ID = 8;
+    public static final int TOP_RATED_MOVIES_ID = 9;
 
-    static final String BASE = "content://" + PROVIDER_NAME;
-    static final Uri BASE_URI = Uri.parse(BASE);
-    static final String MOVIES_BASE = "content://" + PROVIDER_NAME + "/movies";
-    static final Uri MOVIES_BASE_URI = Uri.parse(MOVIES_BASE);
-    static final String MOVIE_URI = MOVIES_BASE + "/";
-    static final Uri FAVORITE_MOVIES_URI = Uri.parse(MOVIES_BASE + "/favorites");
-    static final Uri INSERT_TRAILERS_URI = Uri.parse(BASE + "/trailers");
-    static final String GET_TRAILERS_URI = BASE + "/trailers/";
-    static final Uri INSERT_REVIEWS_URI = Uri.parse(BASE + "/reviews");
-    static final String GET_REVIEWS_URI = BASE + "/reviews/";
+    public static final String BASE = "content://" + PROVIDER_NAME;
+    public static final Uri BASE_URI = Uri.parse(BASE);
+    public static final String MOVIES_BASE = "content://" + PROVIDER_NAME + "/movies";
+    public static final Uri MOVIES_BASE_URI = Uri.parse(MOVIES_BASE);
+    public static final String MOVIE_URI = MOVIES_BASE + "/";
+    public static final Uri FAVORITE_MOVIES_URI = Uri.parse(MOVIES_BASE + "/favorites");
+    public static final Uri INSERT_TRAILERS_URI = Uri.parse(BASE + "/trailers");
+    public static final String GET_TRAILERS_URI = BASE + "/trailers/";
+    public static final Uri INSERT_REVIEWS_URI = Uri.parse(BASE + "/reviews");
+    public static final String GET_REVIEWS_URI = BASE + "/reviews/";
 
 
 
@@ -92,11 +92,11 @@ public class MoviesProvider extends ContentProvider {
      */
 
     private SQLiteDatabase db;
-    static final String DATABASE_NAME = "Movies.db";
-    static final String MOVIES_TABLE_NAME = "movies";
-    static final int DATABASE_VERSION = 3;
+    public static final String DATABASE_NAME = "Movies.db";
+    public static final String MOVIES_TABLE_NAME = "movies";
+    public static final int DATABASE_VERSION = 3;
 
-    static final String CREATE_MOVIES_DB_TABLE =
+    public static final String CREATE_MOVIES_DB_TABLE =
             " CREATE TABLE IF NOT EXISTS " + MOVIES_TABLE_NAME +
                     " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     " movieDBId TEXT NOT NULL, " +
@@ -110,16 +110,16 @@ public class MoviesProvider extends ContentProvider {
                     " isPopular INTEGER, " +
                     " isTopRated INTEGER, " +
                     " isFavorite INTEGER);";
-    static final String SELECT_FILENAME_NONFAVORITE_POSTERS =
+    public static final String SELECT_FILENAME_NONFAVORITE_POSTERS =
             "SELECT " + POSTER_PATH + " FROM " + MOVIES_TABLE_NAME + " WHERE "+ IS_FAVORITE + "=0;";
-    static final String DELETE_NONFAVORITE_MOVIES =
+    public static final String DELETE_NONFAVORITE_MOVIES =
             "DELETE FROM " + MOVIES_TABLE_NAME + " WHERE " + IS_FAVORITE + "=0;";
 
-    static final String SELECT_NONFAVOFITE_MOVIES_ID =
+    public static final String SELECT_NONFAVOFITE_MOVIES_ID =
             "SELECT " + MOVIE_DB_ID + " FROM " + MOVIES_TABLE_NAME + " WHERE " + IS_FAVORITE + "=0";
 
-    static final String TRAILERS_TABLE_NAME = "trailers";
-    static final String CREATE_TRAILERS_DB_TABLE =
+    public static final String TRAILERS_TABLE_NAME = "trailers";
+    public static final String CREATE_TRAILERS_DB_TABLE =
             " CREATE TABLE IF NOT EXISTS " + TRAILERS_TABLE_NAME +
                     " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     " TrailerMovieDBId TEXT NOT NULL, " +
@@ -127,22 +127,22 @@ public class MoviesProvider extends ContentProvider {
                     " Name TEXT, " +
                     " Site TEXT, " +
                     " FKMovieMovieDBId TEXT);";
-    static final String SELECT_FILENAME_NONFAVORITE_TRAILERS =
+    public static final String SELECT_FILENAME_NONFAVORITE_TRAILERS =
             "SELECT " + KEY + " FROM " + TRAILERS_TABLE_NAME + " WHERE " + FK_MOVIE_MOVIE_DB_ID + " IN " +
                     "(" + SELECT_NONFAVOFITE_MOVIES_ID + ");";
-    static final String DELETE_NONFAVORITE_TRAILERS =
+    public static final String DELETE_NONFAVORITE_TRAILERS =
             "DELETE FROM " + TRAILERS_TABLE_NAME + " WHERE " + FK_MOVIE_MOVIE_DB_ID + " IN " +
                     "(" + SELECT_NONFAVOFITE_MOVIES_ID + ");";
 
-    static final String REVIEWS_TABLE_NAME = "reviews";
-    static final String CREATE_REVIEWS_DB_TABLE =
+    public static final String REVIEWS_TABLE_NAME = "reviews";
+    public static final String CREATE_REVIEWS_DB_TABLE =
             " CREATE TABLE IF NOT EXISTS " + REVIEWS_TABLE_NAME +
                     " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     " ReviewMovieDBId TEXT NOT NULL, " +
                     " Author TEXT, " +
                     " Content TEXT NOT NULL, " +
                     " FKMovieMovieDBId TEXT);";
-    static final String DELETE_NONFAVORITE_REVIEWS =
+    public static final String DELETE_NONFAVORITE_REVIEWS =
             "DELETE FROM " + REVIEWS_TABLE_NAME+ " WHERE " + FK_MOVIE_MOVIE_DB_ID + " IN " +
                     "(" + SELECT_NONFAVOFITE_MOVIES_ID + ");";
 

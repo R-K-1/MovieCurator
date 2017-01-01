@@ -1,6 +1,8 @@
-package com.example.ray.popularmovies;
+package com.example.ray.popularmovies.Tools;
 
 import android.net.Uri;
+
+import com.example.ray.popularmovies.BuildConfig;
 
 /**
  * Created by Ray on 12/6/2016.

@@ -12,6 +12,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 
+import com.example.ray.popularmovies.Tools.ApiCall;
+import com.example.ray.popularmovies.Tools.RequestBuilder;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -79,32 +82,37 @@ public class MovieDBAlarmService extends IntentService {
             MoviesProvider.DatabaseHelper y = new MoviesProvider.DatabaseHelper(context);
             SQLiteDatabase db = y.getWritableDatabase();
 
-/*            db.execSQL("DROP TABLE IF EXISTS " +  TRAILERS_TABLE_NAME);
+            db.execSQL(MoviesProvider.CREATE_MOVIES_DB_TABLE);
             db.execSQL(MoviesProvider.CREATE_TRAILERS_DB_TABLE);
-            db.execSQL("DROP TABLE IF EXISTS " +  REVIEWS_TABLE_NAME);
             db.execSQL(MoviesProvider.CREATE_REVIEWS_DB_TABLE);
-            db.execSQL("DROP TABLE IF EXISTS " +  MOVIES_TABLE_NAME);
-            db.execSQL(MoviesProvider.CREATE_MOVIES_DB_TABLE);*/
-            // Bulk insert movies into database
+
             db.execSQL(MoviesProvider.DELETE_NONFAVORITE_REVIEWS);
 
             Cursor cdt = db.rawQuery(MoviesProvider.SELECT_FILENAME_NONFAVORITE_TRAILERS, null);
-            if (cdt != null) {
-                while (cdt.moveToNext()) {
+            if (cdt != null && cdt.moveToFirst()) {
+                do {
                     String fileName = cdt.getString(cdt.getColumnIndex(MoviesProvider.KEY)) + ".jpg";
                     z.deleteImageFromInternalStorage(context, imgDir, fileName);
-                }
+                } while (cdt.moveToNext());
             }
             db.execSQL(MoviesProvider.DELETE_NONFAVORITE_TRAILERS);
 
             Cursor cdm = db.rawQuery(MoviesProvider.SELECT_FILENAME_NONFAVORITE_POSTERS, null);
-            if (cdm != null) {
-                while (cdm.moveToNext()) {
+            if (cdm != null && cdm.moveToFirst()) {
+                 do {
                     String fileName = cdm.getString(cdm.getColumnIndex(MoviesProvider.POSTER_PATH));
                     z.deleteImageFromInternalStorage(context, imgDir, fileName);
-                }
+                } while (cdm.moveToNext());
             }
             db.execSQL(MoviesProvider.DELETE_NONFAVORITE_MOVIES);
+
+            Cursor cmIds = db.rawQuery(MoviesProvider.SELECT_FILENAME_NONFAVORITE_POSTERS, null);
+            if (cmIds != null && cmIds.moveToFirst()) {
+                 do {
+                    String fileName = cmIds.getString(cmIds.getColumnIndex(MoviesProvider.POSTER_PATH));
+                    z.deleteImageFromInternalStorage(context, imgDir, fileName);
+                } while (cmIds.moveToNext());
+            }
 
             for (int i = 0; i < popularMoviesArray.length(); i++) {
                 JSONObject m = popularMoviesArray.getJSONObject(i);

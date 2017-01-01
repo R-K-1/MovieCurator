@@ -21,10 +21,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-<!--
-    <include layout="@layout/content_main" />
--->
-
     <LinearLayout
         android:weightSum="10"
         android:layout_width="match_parent"

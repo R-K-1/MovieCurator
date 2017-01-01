@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.example.ray.popularmovies.Data.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -114,10 +115,10 @@ public class MovieActivity extends Activity {
             Cursor c = getApplicationContext().getContentResolver().query(
                     trailers, null, null, null, null);
 
-            if (c != null) {
-                while (c.moveToNext()) {
+            if (c != null && c.moveToFirst()) {
+                do {
                     mTrailersURLs.add(c.getString(c.getColumnIndex(MoviesProvider.KEY)));
-                }
+                } while (c.moveToNext());
             }
             return "";
         }

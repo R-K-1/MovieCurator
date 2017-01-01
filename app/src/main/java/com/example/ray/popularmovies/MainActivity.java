@@ -11,12 +11,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.ray.popularmovies.Sync.MovieDBAlarmReceiver;
 import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import okhttp3.OkHttpClient;
 
-public class MainActivity extends AppCompatActivity implements communicate{
+public class MainActivity extends AppCompatActivity {
 // public class MainActivity extends FragmentActivity {
 
     private OkHttpClient client;

@@ -1,4 +1,4 @@
-package com.example.ray.popularmovies;
+package com.example.ray.popularmovies.Sync;
 
 import android.app.Service;
 import android.content.Intent;

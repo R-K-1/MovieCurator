@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.example.ray.popularmovies.Data.Movie;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import java.math.BigInteger;
@@ -28,19 +29,13 @@ public class MoviesGridFragment extends Fragment {
     ArrayList<Movie> arrayList;
     GridView v;
     private OkHttpClient client;
-    private communicate cm;
 
     private MoviesGridAdapter mMoviesAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        // return inflater.inflate(R.layout.movies_gridview, container, false);
-        // View v = inflater.inflate(R.layout.movies_gridview, container, false);
-        // GridView v = (GridView) inflater.inflate(R.layout.movies_gridview, container, false);
         v = (GridView) inflater.inflate(R.layout.movies_gridview, container, false);
-        // GridView moviesGrid = (GridView)v.findViewById(R.id.movies_Gridview);
         v.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
@@ -51,21 +46,11 @@ public class MoviesGridFragment extends Fragment {
                 if (movieDetailsFragment != null) {
                     MovieDetailsFragment newMovieDetailsFragment = new MovieDetailsFragment();
                     newMovieDetailsFragment.setMovieIdGlobal(movieId);
-                    // FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
                     FragmentTransaction ft = movieDetailsFragment.getActivity().getFragmentManager().beginTransaction();
                     ft.replace(R.id.layout1, newMovieDetailsFragment);
                     ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
                     ft.addToBackStack(null);
                     ft.commit();
-                    /*Bundle bundle = new Bundle();
-                    bundle.putString("movieId", arrayList.get(position).getmId().toString());
-                    if (movieDetailsFragment.getArguments() == null) {
-                        movieDetailsFragment.setArguments(bundle);
-                    } else {
-                        movieDetailsFragment.getArguments().putAll(bundle);
-                    }
-                    movieDetailsFragment.getArguments().putAll(bundle);*/
-                    movieDetailsFragment.updateMovieDetails(movieId);
                 } else {
                     Intent i = new Intent(getActivity().getApplicationContext(), MovieActivity.class);
                     i.putExtra("movieId", movieId);
@@ -91,13 +76,7 @@ public class MoviesGridFragment extends Fragment {
                 .addNetworkInterceptor(new StethoInterceptor())
                 .build();
 
-        // gridView = (GridView) getView().findViewById(R.id.movies_Grid);
-        // gridView = (GridView) getView().findViewById(R.id.movies_gridview_inside_movies_gridview);
         new GetMoviesFromDB().execute("popular");
-
-        /*if (gridView == null) {
-            gridView = getActivity().getLayoutInflater().inflate(R.layout.)
-        }*/
     }
 
     public class GetMoviesFromDB extends AsyncTask<String, Integer, String> {
@@ -114,8 +93,8 @@ public class MoviesGridFragment extends Fragment {
             Cursor c = getActivity().getApplicationContext().getContentResolver().query(
                     MoviesProvider.MOVIES_BASE_URI, null, null, null, null);
 
-            if (c != null) {
-                while (c.moveToNext()) {
+            if (c != null && c.moveToFirst()) {
+                do {
                     arrayList.add(new Movie(
                             new BigInteger(c.getString(c.getColumnIndex(MoviesProvider.MOVIE_DB_ID))),
                             c.getString(c.getColumnIndex(MoviesProvider.TITLE)),
@@ -128,7 +107,7 @@ public class MoviesGridFragment extends Fragment {
                             (c.getInt(c.getColumnIndex(MoviesProvider.IS_TOP_RATED))),
                             (c.getInt(c.getColumnIndex(MoviesProvider.IS_FAVORITE)))
                     ));
-                }
+                } while (c.moveToNext());
             }
 
             MoviesGridAdapter adapter = new MoviesGridAdapter(
@@ -140,6 +119,7 @@ public class MoviesGridFragment extends Fragment {
                     MoviesProvider.MOVIES_BASE_URI, null, null, null, null);
             MoviesGridAdapter adapter = new MoviesGridAdapter(
                     getActivity().getApplicationContext(), c2);*/
+
             v.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }

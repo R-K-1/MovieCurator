@@ -31,7 +31,7 @@
             android:authorities="com.example.ray.popularmovies"/>
 
         <service
-            android:name=".MoviesAuthenticatorService"
+            android:name=".Sync.MoviesAuthenticatorService"
             android:exported="true"
             >
             <intent-filter>
@@ -43,7 +43,7 @@
         </service>
 
         <service
-            android:name=".MovieDBSyncService"
+            android:name=".Sync.MovieDBSyncService"
             android:exported="true"
             android:process=":sync">
             <intent-filter>
@@ -53,7 +53,7 @@
         </service>
 
         <receiver
-            android:name=".MovieDBAlarmReceiver"
+            android:name=".Sync.MovieDBAlarmReceiver"
             android:process=":remote">
 
         </receiver>

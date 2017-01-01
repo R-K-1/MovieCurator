@@ -1,18 +1,19 @@
-package com.example.ray.popularmovies;
+package com.example.ray.popularmovies.Sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SyncRequest;
 import android.content.SyncResult;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+
+import com.example.ray.popularmovies.Data.Movie;
+import com.example.ray.popularmovies.R;
+import com.example.ray.popularmovies.Tools.ApiCall;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,8 +23,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
-
-import static com.example.ray.popularmovies.MoviesProvider.MOVIES_TABLE_NAME;
 
 /**
  * Created by Ray on 12/21/2016.
@@ -81,9 +80,6 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
             ContentProviderClient provider,
             SyncResult syncResult) {
 
-        // Get the auth token for the current account
-/*        String authToken = mAccountManager.blockingGetAuthToken(account, AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS, true);
-        ParseComServerAccessor parseComService = new ParseComServerAccessor();*/
     /*
      * Put the data transfer code here.
      */
@@ -112,7 +108,9 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
 
             arrayList.clear();
 
-            MoviesProvider.DatabaseHelper y = new MoviesProvider.DatabaseHelper(getContext());
+
+            // TODO uncomment and fix below after implement an SQLLiteOpenHelper
+            /*MoviesProvider.DatabaseHelper y = new MoviesProvider.DatabaseHelper(getContext());
             SQLiteDatabase db = y.getWritableDatabase();
 
             db.execSQL("DROP TABLE IF EXISTS " +  MOVIES_TABLE_NAME);
@@ -171,7 +169,7 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
 
                 getContext().getContentResolver().insert(MoviesProvider.MOVIES_BASE_URI, values);
             }
-
+*/
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -186,8 +184,6 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
         Bundle bundle = new Bundle();
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-/*        ContentResolver.requestSync(getSyncAccount(context),
-                context.getString(R.string.content_authority), bundle);*/
         ContentResolver.requestSync(getSyncAccount(context),
                 "com.example.ray.popularmovies", bundle);
     }
@@ -214,9 +210,6 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
                 (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
 
         // Create the account type and default account
-/*        Account newAccount = new Account(
-                context.getString(R.string.app_name), context.getString(R.string.sync_account_type));*/
-
         Account newAccount = new Account(
                 context.getString(R.string.app_name), "com.example.ray.popularmovies.datasync");
 
@@ -270,7 +263,6 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
         /*
          * Without calling setSyncAutomatically, our periodic sync will not be enabled.
          */
-        // ContentResolver.setSyncAutomatically(newAccount, context.getString(R.string.content_authority), true);
         ContentResolver.setSyncAutomatically(newAccount, context.getString(R.string.content_authority), true);
 
         /*
@@ -278,55 +270,5 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
          */
         syncImmediately(context);
     }
-
-
-/*    private ArrayList<Movie> addMoviesToPersistenceArrayList (JSONArray moviesJSON,
-                                                              ArrayList<Movie> moviesArrayList,
-                                                              boolean isPopular, boolean isTopRated) {
-        try {
-
-            for(int i =0;i<moviesJSON.length(); i++) {
-                JSONObject movie = moviesJSON.getJSONObject(i);
-                Uri.Builder uri = new Uri.Builder();
-                uri.scheme("https")
-                        .authority("image.tmdb.org")
-                        .appendPath("t")
-                        .appendPath("p")
-                        .appendPath("w185");
-
-                if (isPopular) {
-                    moviesArrayList.add(new Movie(
-                            new BigInteger(movie.getString("id")),
-                            movie.getString("title"),
-                            new String(uri.build().toString() + movie.getString("poster_path")),
-                            movie.getString("backdrop_path"),
-                            movie.getString("overview"),
-                            movie.getString("release_date"),
-                            Double.parseDouble(movie.getString("popularity")),
-                            true,
-                            false,
-                            false
-                    ));
-                } else if (isTopRated) {
-                    moviesArrayList.add(new Movie(
-                            new BigInteger(movie.getString("id")),
-                            movie.getString("title"),
-                            new String(uri.build().toString() + movie.getString("poster_path")),
-                            movie.getString("backdrop_path"),
-                            movie.getString("overview"),
-                            movie.getString("release_date"),
-                            Double.parseDouble(movie.getString("popularity")),
-                            false,
-                            true,
-                            false
-                    ));
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return moviesArrayList;
-    }*/
 
 }

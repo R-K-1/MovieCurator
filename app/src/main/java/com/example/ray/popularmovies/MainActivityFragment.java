@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.example.ray.popularmovies.Data.Movie;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import java.math.BigInteger;
@@ -86,8 +87,8 @@ public class MainActivityFragment extends Fragment {
             Cursor c = getActivity().getApplicationContext().getContentResolver().query(
                     MoviesProvider.MOVIES_BASE_URI, null, null, null, null);
 
-            if (c != null) {
-                while (c.moveToNext()) {
+            if (c != null && c.moveToFirst()) {
+                 do {
                     arrayList.add(new Movie(
                             new BigInteger(c.getString(c.getColumnIndex(MoviesProvider.MOVIE_DB_ID))),
                             c.getString(c.getColumnIndex(MoviesProvider.TITLE)),
@@ -101,7 +102,7 @@ public class MainActivityFragment extends Fragment {
                             (c.getInt(c.getColumnIndex(MoviesProvider.IS_FAVORITE)))
 
                     ));
-                }
+                } while (c.moveToNext());
             }
 
             MoviesGridAdapter adapter = new MoviesGridAdapter(

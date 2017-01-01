@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.example.ray.popularmovies.Data.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;

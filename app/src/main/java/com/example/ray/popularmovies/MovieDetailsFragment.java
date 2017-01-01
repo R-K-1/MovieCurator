@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.example.ray.popularmovies.Data.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -51,19 +52,6 @@ public class MovieDetailsFragment extends Fragment {
         Utils utils = new Utils();
         View v = getView();
         final Activity a = getActivity();
-
-        // Get intent data
-        // Intent i = a.getIntent();
-        // final Movie movie = (Movie) i.getParcelableExtra("SelectedMovie");
-        /*String Id = "";
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            Id = bundle.getString("movieId");
-        }
-
-        final Movie movie = getMovieFromDB(Id);*/
-
-        // final Movie movie = getMovieFromDB(movieIdGlobal);
 
         final Movie movie = utils.getMovieFromDB(movieIdGlobal, a);
 
@@ -164,10 +152,10 @@ public class MovieDetailsFragment extends Fragment {
             Cursor c = getActivity().getApplicationContext().getContentResolver().query(
                     trailers, null, null, null, null);
 
-            if (c != null) {
-                while (c.moveToNext()) {
+            if (c != null && c.moveToFirst()) {
+                do {
                     mTrailersURLs.add(c.getString(c.getColumnIndex(MoviesProvider.KEY)));
-                }
+                } while (c.moveToNext());
             }
 
             TrailersListAdapter adapter = new TrailersListAdapter(

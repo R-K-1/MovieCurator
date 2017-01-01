@@ -1,8 +1,10 @@
-package com.example.ray.popularmovies;
+package com.example.ray.popularmovies.Sync;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import com.example.ray.popularmovies.MovieDBAlarmService;
 
 /**
  * Created by Ray on 12/24/2016.
