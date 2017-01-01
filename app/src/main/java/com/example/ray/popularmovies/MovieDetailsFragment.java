@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -36,6 +37,8 @@ public class MovieDetailsFragment extends Fragment {
     private OkHttpClient mClient;
     private ArrayList<String> mTrailersURLs;
     private ListView mTrailers;
+    private ArrayList<String> mReviewsList;
+    private ListView mReviews;
     private final Activity a = getActivity();
     private String movieIdGlobal = "";
 
@@ -100,9 +103,10 @@ public class MovieDetailsFragment extends Fragment {
 
             mTrailersURLs = new ArrayList<>();
             mClient = new OkHttpClient();
-            new GetTrailersJSON().execute(movie.getmId().toString());
+            new GetTrailersFromDB().execute(movie.getmId().toString());
 
             mTrailers = (ListView) v.findViewById(R.id.movie_detail_trailers_list);
+            mReviews = (ListView) v.findViewById(R.id.movie_detail_reviews_list);
 
             mTrailers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View v,
@@ -111,6 +115,11 @@ public class MovieDetailsFragment extends Fragment {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + movieId)));
                 }
             });
+
+            mReviewsList = new ArrayList<String >();
+            new GetReviewsFromDB().execute(movie.getmId().toString());
+
+
         }
 
     }
@@ -119,29 +128,10 @@ public class MovieDetailsFragment extends Fragment {
         movieIdGlobal = incomingMovieId;
     }
 
-    public void updateMovieDetails (String movieId) {
-        Bundle bundle = new Bundle();
-        bundle.putString("movieId", movieId);
-        /*if (this.getArguments() == null) {
-            this.setArguments(bundle);
-        } else {
-            this.getArguments().putAll(bundle);
-        }*/
-        // this.setArguments(bundle);
-        this.onActivityCreated(bundle);
-    }
-
-    class GetTrailersJSON extends AsyncTask<String, Integer, String> {
+    class GetTrailersFromDB extends AsyncTask<String, Integer, String> {
 
         @Override
-        protected String doInBackground(String... params) {/*
-            String response = new String();
-            try {
-                response = ApiCall.GET(mClient, RequestBuilder.buildGetTrailersURI(params[0]).toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return response;*/
+        protected String doInBackground(String... params) {
             return params[0];
         }
 
@@ -162,6 +152,34 @@ public class MovieDetailsFragment extends Fragment {
                     getActivity().getApplicationContext(), R.id.movie_detail_trailers_list, mTrailersURLs
             );
             mTrailers.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    class GetReviewsFromDB extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            return params[0];
+        }
+
+        @Override
+        protected void onPostExecute(String content) {
+            mReviewsList.clear();
+            Uri reviews = Uri.parse(MoviesProvider.GET_REVIEWS_URI + content);
+            Cursor c = getActivity().getApplicationContext().getContentResolver().query(
+                    reviews, null, null, null, null);
+
+            if (c != null && c.moveToFirst()) {
+                do {
+                    mReviewsList.add(c.getString(c.getColumnIndex(MoviesProvider.CONTENT)) + "\n \n"
+                            + c.getString(c.getColumnIndex(MoviesProvider.AUTHOR)));
+                } while (c.moveToNext());
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+                    R.layout.reviews_list_item, mReviewsList);
+            mReviews.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }
     }

@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -33,11 +34,15 @@ public class MovieActivity extends Activity {
     private OkHttpClient mClient;
     private ArrayList<String> mTrailersURLs;
     private ListView mTrailers;
+    private ArrayList<String> mReviewsList;
+    private ListView mReviews;
+    Activity a;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        a = this;
         setContentView(R.layout.movie_detail);
 
         Utils utils = new Utils();
@@ -104,6 +109,9 @@ public class MovieActivity extends Activity {
             }
         });
 
+        mReviewsList = new ArrayList<String>();
+        new GetReviewsFromDB().execute(movie.getmId().toString());
+        mReviews = (ListView) findViewById(R.id.movie_detail_reviews_list);
     }
 
     class GetTrailersJSON extends AsyncTask<String, Integer, String> {
@@ -129,6 +137,34 @@ public class MovieActivity extends Activity {
                     getApplicationContext(), R.id.movie_detail_trailers_list, mTrailersURLs
             );
             mTrailers.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    class GetReviewsFromDB extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            return params[0];
+        }
+
+        @Override
+        protected void onPostExecute(String content) {
+            mReviewsList.clear();
+            Uri reviews = Uri.parse(MoviesProvider.GET_REVIEWS_URI + content);
+            Cursor c = getApplicationContext().getContentResolver().query(
+                    reviews, null, null, null, null);
+
+            if (c != null && c.moveToFirst()) {
+                do {
+                    mReviewsList.add(c.getString(c.getColumnIndex(MoviesProvider.CONTENT)) + "\n \n"
+                        + c.getString(c.getColumnIndex(MoviesProvider.AUTHOR)));
+                } while (c.moveToNext());
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(a,
+                    R.layout.reviews_list_item, mReviewsList);
+            mReviews.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }
     }
