@@ -6,7 +6,9 @@
     <string name="order_by_favorites">By Favorites</string>
     <string name="moviedb_api_filter_by_popularity">popular</string>
     <string name="moviedb_api_filter_by_ratings">top_rated</string>
-    <string name="db_filter_favorites">favorite</string>
+    <string name="db_filter_favorite">favorite</string>
+    <string name="db_filter_popular">popular</string>
+    <string name="db_filter_top_rated">toprated</string>
     <string name="run_sync">run_sync</string>
     <string name="content_authority">com.example.ray.popularmovies</string>
     <string name="stub_movie_title">stub</string>

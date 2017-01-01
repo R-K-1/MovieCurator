@@ -56,16 +56,18 @@ public class MoviesProvider extends ContentProvider {
     public static final int REVIEWS = 4;
     public static final int MOVIE_TRAILERS = 5;
     public static final int MOVIE_REVIEWS = 6;
-    public static final int FAVORITE_MOVIES_ID = 7;
-    public  static final int POPULAR_MOVIES_ID = 8;
-    public static final int TOP_RATED_MOVIES_ID = 9;
+    public static final int FAVORITE_MOVIES = 7;
+    public  static final int POPULAR_MOVIES = 8;
+    public static final int TOP_RATED_MOVIES = 9;
 
     public static final String BASE = "content://" + PROVIDER_NAME;
     public static final Uri BASE_URI = Uri.parse(BASE);
     public static final String MOVIES_BASE = "content://" + PROVIDER_NAME + "/movies";
     public static final Uri MOVIES_BASE_URI = Uri.parse(MOVIES_BASE);
     public static final String MOVIE_URI = MOVIES_BASE + "/";
-    public static final Uri FAVORITE_MOVIES_URI = Uri.parse(MOVIES_BASE + "/favorites");
+    public static final Uri FAVORITE_MOVIES_URI = Uri.parse(MOVIES_BASE + "/favorite");
+    public static final Uri TOP_RATED_MOVIES_URI = Uri.parse(MOVIES_BASE + "/toprated");
+    public static final Uri POPULAR_MOVIES_URI = Uri.parse(MOVIES_BASE + "/popular");
     public static final Uri INSERT_TRAILERS_URI = Uri.parse(BASE + "/trailers");
     public static final String GET_TRAILERS_URI = BASE + "/trailers/";
     public static final Uri INSERT_REVIEWS_URI = Uri.parse(BASE + "/reviews");
@@ -78,9 +80,9 @@ public class MoviesProvider extends ContentProvider {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(PROVIDER_NAME, "movies", MOVIES);
         uriMatcher.addURI(PROVIDER_NAME, "movies/#", MOVIE_ID);
-        uriMatcher.addURI(PROVIDER_NAME, "movies/favorites", FAVORITE_MOVIES_ID);
-        uriMatcher.addURI(PROVIDER_NAME, "movies/popular", POPULAR_MOVIES_ID);
-        uriMatcher.addURI(PROVIDER_NAME, "movies/toprated", TOP_RATED_MOVIES_ID);
+        uriMatcher.addURI(PROVIDER_NAME, "movies/favorite", FAVORITE_MOVIES);
+        uriMatcher.addURI(PROVIDER_NAME, "movies/popular", POPULAR_MOVIES);
+        uriMatcher.addURI(PROVIDER_NAME, "movies/toprated", TOP_RATED_MOVIES);
         uriMatcher.addURI(PROVIDER_NAME, "trailers", TRAILERS);
         uriMatcher.addURI(PROVIDER_NAME, "reviews", REVIEWS);
         uriMatcher.addURI(PROVIDER_NAME, "trailers/#", MOVIE_TRAILERS);
@@ -189,7 +191,6 @@ public class MoviesProvider extends ContentProvider {
         /**
          * Add a new movie record
          */
-        // long rowID = db.insert(	MOVIES_TABLE_NAME, "", values);
         long rowID = 0;
 
         switch (uriMatcher.match(uri)) {
@@ -228,6 +229,21 @@ public class MoviesProvider extends ContentProvider {
                 qb.setProjectionMap(MOVIES_PROJECTION_MAP);
                 break;
 
+            case FAVORITE_MOVIES:
+                qb.setTables(MOVIES_TABLE_NAME);
+                qb.appendWhere( IS_FAVORITE + "=" + 1);
+                break;
+
+            case POPULAR_MOVIES:
+                qb.setTables(MOVIES_TABLE_NAME);
+                qb.appendWhere( IS_POPULAR + "=" + 1);
+                break;
+
+            case TOP_RATED_MOVIES:
+                qb.setTables(MOVIES_TABLE_NAME);
+                qb.appendWhere( IS_TOP_RATED + "=" + 1);
+                break;
+
             case MOVIE_ID:
                 qb.setTables(MOVIES_TABLE_NAME);
                 qb.appendWhere( MOVIE_DB_ID + "=" + uri.getPathSegments().get(1));
@@ -250,7 +266,6 @@ public class MoviesProvider extends ContentProvider {
             /**
              * By default sort on student names
              */
-            // sortOrder = POPULARITY;
             sortOrder = "";
         }
 

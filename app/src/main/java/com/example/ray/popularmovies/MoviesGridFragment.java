@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,7 +14,6 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.example.ray.popularmovies.Data.Movie;
-import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -29,8 +29,7 @@ public class MoviesGridFragment extends Fragment {
     ArrayList<Movie> arrayList;
     GridView v;
     private OkHttpClient client;
-
-    private MoviesGridAdapter mMoviesAdapter;
+    private String dbMoviesFilter = "";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,28 +69,48 @@ public class MoviesGridFragment extends Fragment {
 
         client = new OkHttpClient();
 
-        arrayList = new ArrayList<>();
-
-        client = new OkHttpClient.Builder()
+        /*client = new OkHttpClient.Builder()
                 .addNetworkInterceptor(new StethoInterceptor())
-                .build();
+                .build();*/
 
-        new GetMoviesFromDB().execute("popular");
+        dbMoviesFilter = dbMoviesFilter == "" ? getString(R.string.db_filter_popular):dbMoviesFilter;
+        new GetMoviesFromDB().execute(dbMoviesFilter);
+    }
+
+    public void setDbMoviesFilter (String filter) {
+        dbMoviesFilter = filter;
+    }
+
+    public void updateGrid (String filter) {
+        new GetMoviesFromDB().execute(filter);
     }
 
     public class GetMoviesFromDB extends AsyncTask<String, Integer, String> {
 
         @Override
         protected String doInBackground(String... params) {
-            return "";
+            return params[0];
         }
 
         @Override
         protected void onPostExecute(String content) {
             arrayList.clear();
 
+            Uri x;
+            String favs = getString(R.string.db_filter_favorite);
+            String pops = getString(R.string.db_filter_popular);
+            String tops = getString(R.string.db_filter_top_rated);
+
+            if (content == getString(R.string.db_filter_favorite)) {
+                x = MoviesProvider.FAVORITE_MOVIES_URI;
+            } else if (content == getString(R.string.db_filter_top_rated)) {
+                x = MoviesProvider.TOP_RATED_MOVIES_URI;
+            } else {
+                x = MoviesProvider.POPULAR_MOVIES_URI;
+            }
+
             Cursor c = getActivity().getApplicationContext().getContentResolver().query(
-                    MoviesProvider.MOVIES_BASE_URI, null, null, null, null);
+                    x, null, null, null, null);
 
             if (c != null && c.moveToFirst()) {
                 do {

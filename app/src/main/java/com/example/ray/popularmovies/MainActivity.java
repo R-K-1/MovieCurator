@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         Stetho.initializeWithDefaults(this);
 
-        scheduleAlarm();
+        // scheduleAlarm();
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -79,20 +79,23 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.order_by_popularity) {
-            MainActivityFragment fragment = (MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-            fragment.new GetMoviesFromDB().execute(getResources().getString(R.string.moviedb_api_filter_by_popularity));
+            MoviesGridFragment moviesGridFragment =
+                    (MoviesGridFragment) getFragmentManager().findFragmentById(R.id.movies_grid_in_fragment);
+            moviesGridFragment.updateGrid(getString(R.string.db_filter_popular));
             return true;
         }
 
         if (id == R.id.order_by_ratings) {
-            MainActivityFragment fragment = (MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-            fragment.new GetMoviesFromDB().execute(getResources().getString(R.string.moviedb_api_filter_by_ratings));
+            MoviesGridFragment moviesGridFragment =
+                    (MoviesGridFragment) getFragmentManager().findFragmentById(R.id.movies_grid_in_fragment);
+            moviesGridFragment.updateGrid(getString(R.string.db_filter_top_rated));
             return true;
         }
 
         if (id == R.id.order_by_favorites) {
-            MainActivityFragment fragment = (MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-            fragment.new GetMoviesFromDB().execute(getResources().getString(R.string.db_filter_favorites));
+            MoviesGridFragment moviesGridFragment =
+                    (MoviesGridFragment) getFragmentManager().findFragmentById(R.id.movies_grid_in_fragment);
+            moviesGridFragment.updateGrid(getString(R.string.db_filter_favorite));
             return true;
         }
 
