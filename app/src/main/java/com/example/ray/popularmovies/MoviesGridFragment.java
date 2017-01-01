@@ -69,10 +69,6 @@ public class MoviesGridFragment extends Fragment {
 
         client = new OkHttpClient();
 
-        /*client = new OkHttpClient.Builder()
-                .addNetworkInterceptor(new StethoInterceptor())
-                .build();*/
-
         dbMoviesFilter = dbMoviesFilter == "" ? getString(R.string.db_filter_popular):dbMoviesFilter;
         new GetMoviesFromDB().execute(dbMoviesFilter);
     }
