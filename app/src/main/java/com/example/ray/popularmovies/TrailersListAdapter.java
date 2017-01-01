@@ -22,7 +22,6 @@ public class TrailersListAdapter extends BaseAdapter {
     private ArrayList<String> mURLs;
 
     public TrailersListAdapter(Context context, int resource, ArrayList<String> URLs) {
-        // super(context, resource, products);
         this.mContext = context;
         this.mResource = resource;
         this.mURLs = URLs;

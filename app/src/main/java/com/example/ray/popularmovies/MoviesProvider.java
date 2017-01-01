@@ -61,7 +61,6 @@ public class MoviesProvider extends ContentProvider {
     public static final int TOP_RATED_MOVIES = 9;
 
     public static final String BASE = "content://" + PROVIDER_NAME;
-    public static final Uri BASE_URI = Uri.parse(BASE);
     public static final String MOVIES_BASE = "content://" + PROVIDER_NAME + "/movies";
     public static final Uri MOVIES_BASE_URI = Uri.parse(MOVIES_BASE);
     public static final String MOVIE_URI = MOVIES_BASE + "/";
@@ -252,13 +251,11 @@ public class MoviesProvider extends ContentProvider {
             case MOVIE_TRAILERS:
                 qb.setTables(TRAILERS_TABLE_NAME);
                 qb.appendWhere( FK_MOVIE_MOVIE_DB_ID + "=" + uri.getPathSegments().get(1));
-                // qb.setProjectionMap(TRAILERS_PROJECTION_MAP);
                 break;
 
             case MOVIE_REVIEWS:
                 qb.setTables(REVIEWS_TABLE_NAME);
                 qb.appendWhere( FK_MOVIE_MOVIE_DB_ID + "=" + uri.getPathSegments().get(1));
-                // qb.setProjectionMap(REVIEWS_PROJECTION_MAP);
                 break;
         }
 
