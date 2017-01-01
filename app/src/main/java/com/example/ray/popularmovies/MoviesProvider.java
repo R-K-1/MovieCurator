@@ -110,13 +110,14 @@ public class MoviesProvider extends ContentProvider {
                     " isPopular INTEGER, " +
                     " isTopRated INTEGER, " +
                     " isFavorite INTEGER);";
+    public static final String SELECT_FAVORITE_MOVIES_ID =
+            "SELECT " + MOVIE_DB_ID + " FROM " + MOVIES_TABLE_NAME + " WHERE " + IS_FAVORITE + "=1";
+    public static final String SELECT_NONFAVORITE_MOVIES_ID =
+            "SELECT " + MOVIE_DB_ID + " FROM " + MOVIES_TABLE_NAME + " WHERE " + IS_FAVORITE + "=0";
     public static final String SELECT_FILENAME_NONFAVORITE_POSTERS =
             "SELECT " + POSTER_PATH + " FROM " + MOVIES_TABLE_NAME + " WHERE "+ IS_FAVORITE + "=0;";
     public static final String DELETE_NONFAVORITE_MOVIES =
             "DELETE FROM " + MOVIES_TABLE_NAME + " WHERE " + IS_FAVORITE + "=0;";
-
-    public static final String SELECT_NONFAVOFITE_MOVIES_ID =
-            "SELECT " + MOVIE_DB_ID + " FROM " + MOVIES_TABLE_NAME + " WHERE " + IS_FAVORITE + "=0";
 
     public static final String TRAILERS_TABLE_NAME = "trailers";
     public static final String CREATE_TRAILERS_DB_TABLE =
@@ -129,10 +130,10 @@ public class MoviesProvider extends ContentProvider {
                     " FKMovieMovieDBId TEXT);";
     public static final String SELECT_FILENAME_NONFAVORITE_TRAILERS =
             "SELECT " + KEY + " FROM " + TRAILERS_TABLE_NAME + " WHERE " + FK_MOVIE_MOVIE_DB_ID + " IN " +
-                    "(" + SELECT_NONFAVOFITE_MOVIES_ID + ");";
+                    "(" + SELECT_NONFAVORITE_MOVIES_ID + ");";
     public static final String DELETE_NONFAVORITE_TRAILERS =
             "DELETE FROM " + TRAILERS_TABLE_NAME + " WHERE " + FK_MOVIE_MOVIE_DB_ID + " IN " +
-                    "(" + SELECT_NONFAVOFITE_MOVIES_ID + ");";
+                    "(" + SELECT_NONFAVORITE_MOVIES_ID + ");";
 
     public static final String REVIEWS_TABLE_NAME = "reviews";
     public static final String CREATE_REVIEWS_DB_TABLE =
@@ -144,7 +145,7 @@ public class MoviesProvider extends ContentProvider {
                     " FKMovieMovieDBId TEXT);";
     public static final String DELETE_NONFAVORITE_REVIEWS =
             "DELETE FROM " + REVIEWS_TABLE_NAME+ " WHERE " + FK_MOVIE_MOVIE_DB_ID + " IN " +
-                    "(" + SELECT_NONFAVOFITE_MOVIES_ID + ");";
+                    "(" + SELECT_NONFAVORITE_MOVIES_ID + ");";
 
     /**
      * Helper class that actually creates and manages

@@ -20,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
 
@@ -106,58 +107,62 @@ public class MovieDBAlarmService extends IntentService {
             }
             db.execSQL(MoviesProvider.DELETE_NONFAVORITE_MOVIES);
 
-            Cursor cmIds = db.rawQuery(MoviesProvider.SELECT_FILENAME_NONFAVORITE_POSTERS, null);
+            ArrayList<String> favoriteMoviesId = new ArrayList<String>();
+            Cursor cmIds = db.rawQuery(MoviesProvider.SELECT_FAVORITE_MOVIES_ID, null);
             if (cmIds != null && cmIds.moveToFirst()) {
                  do {
-                    String fileName = cmIds.getString(cmIds.getColumnIndex(MoviesProvider.POSTER_PATH));
-                    z.deleteImageFromInternalStorage(context, imgDir, fileName);
+                     favoriteMoviesId.add(cmIds.getString(cmIds.getColumnIndex(MoviesProvider.MOVIE_DB_ID)));
                 } while (cmIds.moveToNext());
             }
 
+            ArrayList<String> moviesInDBIds = new ArrayList<String>();
+
             for (int i = 0; i < popularMoviesArray.length(); i++) {
                 JSONObject m = popularMoviesArray.getJSONObject(i);
-
-                String responseTrailers = new String();
-                String responseReviews = new String();
                 String mId = m.getString("id");
 
-                try {
-                    responseTrailers = ApiCall.GET(x,
-                            RequestBuilder.buildGetTrailersURI(mId).toString());
-                    responseReviews += ApiCall.GET(x,
-                            RequestBuilder.buildGetReviewsURI(mId).toString());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                if (!favoriteMoviesId.contains(mId)) {
 
-                JSONObject movieTrailers = new JSONObject(responseTrailers);
-                JSONArray movieTrailersArray = movieTrailers.getJSONArray("results");
-                JSONObject movieReviews = new JSONObject(responseReviews);
-                JSONArray movieReviewsArray = movieReviews.getJSONArray("results");
 
-                String imgURL = uri.build().toString() + m.getString("poster_path");
-                Bitmap b;
-                try {
-                    b = z.getBitmapFromCloud(context, imgURL);
-                    z.saveBitmapToInternalStorage(context, b, m.getString("poster_path") );
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                    String responseTrailers = new String();
+                    String responseReviews = new String();
+                    try {
+                        responseTrailers = ApiCall.GET(x,
+                                RequestBuilder.buildGetTrailersURI(mId).toString());
+                        responseReviews += ApiCall.GET(x,
+                                RequestBuilder.buildGetReviewsURI(mId).toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-                values.clear();
-                values.put(MoviesProvider.MOVIE_DB_ID, mId);
-                values.put(MoviesProvider.TITLE, m.getString("title"));
-                values.put(MoviesProvider.ORIGINAL_TITLE, m.getString("original_title"));
-                values.put(MoviesProvider.POSTER_PATH, m.getString("poster_path"));
-                values.put(MoviesProvider.BACKDROP_PATH, m.getString("backdrop_path"));
-                values.put(MoviesProvider.OVERVIEW, m.getString("overview"));
-                values.put(MoviesProvider.RELEASE_DATE, m.getString("release_date"));
-                values.put(MoviesProvider.POPULARITY, m.getString("popularity"));
-                values.put(MoviesProvider.IS_POPULAR, 1);
-                values.put(MoviesProvider.IS_TOP_RATED, 0);
-                values.put(MoviesProvider.IS_FAVORITE, 0);
+                    JSONObject movieTrailers = new JSONObject(responseTrailers);
+                    JSONArray movieTrailersArray = movieTrailers.getJSONArray("results");
+                    JSONObject movieReviews = new JSONObject(responseReviews);
+                    JSONArray movieReviewsArray = movieReviews.getJSONArray("results");
 
-                getContentResolver().insert(MoviesProvider.MOVIES_BASE_URI, values);
+                    String imgURL = uri.build().toString() + m.getString("poster_path");
+                    Bitmap b;
+                    try {
+                        b = z.getBitmapFromCloud(context, imgURL);
+                        z.saveBitmapToInternalStorage(context, b, m.getString("poster_path"));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    values.clear();
+                    values.put(MoviesProvider.MOVIE_DB_ID, mId);
+                    values.put(MoviesProvider.TITLE, m.getString("title"));
+                    values.put(MoviesProvider.ORIGINAL_TITLE, m.getString("original_title"));
+                    values.put(MoviesProvider.POSTER_PATH, m.getString("poster_path"));
+                    values.put(MoviesProvider.BACKDROP_PATH, m.getString("backdrop_path"));
+                    values.put(MoviesProvider.OVERVIEW, m.getString("overview"));
+                    values.put(MoviesProvider.RELEASE_DATE, m.getString("release_date"));
+                    values.put(MoviesProvider.POPULARITY, m.getString("popularity"));
+                    values.put(MoviesProvider.IS_POPULAR, 1);
+                    values.put(MoviesProvider.IS_TOP_RATED, 0);
+                    values.put(MoviesProvider.IS_FAVORITE, 0);
+
+                    getContentResolver().insert(MoviesProvider.MOVIES_BASE_URI, values);
                     ContentValues values2 = new ContentValues();
 
                     for (int j = 0; j < movieTrailersArray.length(); j++) {
@@ -178,7 +183,7 @@ public class MovieDBAlarmService extends IntentService {
                             Bitmap bm;
                             try {
                                 bm = z.getBitmapFromCloud(context, posterThumbnail.build().toString());
-                                z.saveBitmapToInternalStorage(context, bm, (key + ".jpg") );
+                                z.saveBitmapToInternalStorage(context, bm, (key + ".jpg"));
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -199,7 +204,7 @@ public class MovieDBAlarmService extends IntentService {
 
                     for (int k = 0; k < movieReviewsArray.length(); k++) {
                         values2.clear();
-                        try{
+                        try {
                             JSONObject r = movieReviewsArray.getJSONObject(k);
 
                             values2.clear();
@@ -213,38 +218,123 @@ public class MovieDBAlarmService extends IntentService {
                             e.printStackTrace();
                         }
                     }
+                    moviesInDBIds.add(mId);
+                }
 
             }
 
-/*            for (int i = 0; i < topRatedMoviesArray.length(); i++) {
+            for (int i = 0; i < topRatedMoviesArray.length(); i++) {
                 JSONObject m = topRatedMoviesArray.getJSONObject(i);
+                String mId = m.getString("id");
 
-                String imgURL = uri.build().toString() + m.getString("poster_path");
-                Bitmap b;
-                try {
-                    b = z.getBitmapFromCloud(context, imgURL);
-                    z.saveBitmapToInternalStorage(context, b, m.getString("poster_path") );
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (!favoriteMoviesId.contains(mId)) {
+
+                    if (!moviesInDBIds.contains(mId)) {
+
+
+                        String responseTrailers = new String();
+                        String responseReviews = new String();
+                        try {
+                            responseTrailers = ApiCall.GET(x,
+                                    RequestBuilder.buildGetTrailersURI(mId).toString());
+                            responseReviews += ApiCall.GET(x,
+                                    RequestBuilder.buildGetReviewsURI(mId).toString());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        JSONObject movieTrailers = new JSONObject(responseTrailers);
+                        JSONArray movieTrailersArray = movieTrailers.getJSONArray("results");
+                        JSONObject movieReviews = new JSONObject(responseReviews);
+                        JSONArray movieReviewsArray = movieReviews.getJSONArray("results");
+
+                        String imgURL = uri.build().toString() + m.getString("poster_path");
+                        Bitmap b;
+                        try {
+                            b = z.getBitmapFromCloud(context, imgURL);
+                            z.saveBitmapToInternalStorage(context, b, m.getString("poster_path"));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        values.clear();
+                        values.put(MoviesProvider.MOVIE_DB_ID, mId);
+                        values.put(MoviesProvider.TITLE, m.getString("title"));
+                        values.put(MoviesProvider.ORIGINAL_TITLE, m.getString("original_title"));
+                        values.put(MoviesProvider.POSTER_PATH, m.getString("poster_path"));
+                        values.put(MoviesProvider.BACKDROP_PATH, m.getString("backdrop_path"));
+                        values.put(MoviesProvider.OVERVIEW, m.getString("overview"));
+                        values.put(MoviesProvider.RELEASE_DATE, m.getString("release_date"));
+                        values.put(MoviesProvider.POPULARITY, m.getString("popularity"));
+                        values.put(MoviesProvider.IS_POPULAR, 0);
+                        values.put(MoviesProvider.IS_TOP_RATED, 1);
+                        values.put(MoviesProvider.IS_FAVORITE, 0);
+
+                        getContentResolver().insert(MoviesProvider.MOVIES_BASE_URI, values);
+                        ContentValues values2 = new ContentValues();
+
+                        for (int j = 0; j < movieTrailersArray.length(); j++) {
+                            try {
+                                JSONObject t = movieTrailersArray.getJSONObject(j);
+
+                                String key = t.get("key").toString();
+
+                                Uri.Builder posterThumbnail = new Uri.Builder();
+                                posterThumbnail.scheme("https")
+                                        .authority("img.youtube.com")
+                                        .appendPath("vi")
+                                        .appendPath(key)
+                                        .appendPath("0.jpg");
+
+
+                                String trailerImgURL = posterThumbnail.build().toString() + m.getString("poster_path");
+                                Bitmap bm;
+                                try {
+                                    bm = z.getBitmapFromCloud(context, posterThumbnail.build().toString());
+                                    z.saveBitmapToInternalStorage(context, bm, (key + ".jpg"));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+                                values2.clear();
+                                values2.put(MoviesProvider.FK_MOVIE_MOVIE_DB_ID, mId);
+                                values2.put(MoviesProvider.TRAILER_MOVIE_DB_ID, t.get("id").toString());
+                                values2.put(MoviesProvider.KEY, key);
+                                values2.put(MoviesProvider.NAME, t.get("name").toString());
+                                values2.put(MoviesProvider.SITE, t.get("site").toString());
+
+                                getContentResolver().insert(MoviesProvider.INSERT_TRAILERS_URI, values2);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                        for (int k = 0; k < movieReviewsArray.length(); k++) {
+                            values2.clear();
+                            try {
+                                JSONObject r = movieReviewsArray.getJSONObject(k);
+
+                                values2.clear();
+                                values2.put(MoviesProvider.FK_MOVIE_MOVIE_DB_ID, mId);
+                                values2.put(MoviesProvider.REVIEW_MOVIE_DB_ID, r.get("id").toString());
+                                values2.put(MoviesProvider.AUTHOR, r.get("author").toString());
+                                values2.put(MoviesProvider.CONTENT, r.get("content").toString());
+
+                                getContentResolver().insert(MoviesProvider.INSERT_REVIEWS_URI, values2);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } else {
+                        values.clear();
+                        String updateMovieURI = MoviesProvider.MOVIE_URI + mId;
+                        values.put(MoviesProvider.IS_TOP_RATED, 1);
+                        getContentResolver().update(Uri.parse(updateMovieURI), values, null, null);
+                    }
                 }
 
-                values.clear();
-                values.put(MoviesProvider.MOVIE_DB_ID, m.getString("id"));
-                values.put(MoviesProvider.TITLE, m.getString("title"));
-                values.put(MoviesProvider.ORIGINAL_TITLE, m.getString("original_title"));
-                values.put(MoviesProvider.POSTER_PATH, uri.build().toString() + m.getString("poster_path"));
-                values.put(MoviesProvider.BACKDROP_PATH, m.getString("backdrop_path"));
-                values.put(MoviesProvider.OVERVIEW, m.getString("overview"));
-                values.put(MoviesProvider.RELEASE_DATE, m.getString("release_date"));
-                values.put(MoviesProvider.POPULARITY, m.getString("popularity"));
-                values.put(MoviesProvider.IS_POPULAR, 0);
-                values.put(MoviesProvider.IS_TOP_RATED, 1);
-                values.put(MoviesProvider.IS_FAVORITE, 0);
-
-                // getContentResolver().insert(MoviesProvider.MOVIES_BASE_URI, values);
-            }*/
-
-
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
