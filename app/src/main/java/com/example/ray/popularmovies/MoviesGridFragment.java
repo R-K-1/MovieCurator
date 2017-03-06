@@ -129,12 +129,6 @@ public class MoviesGridFragment extends Fragment {
                     getActivity().getApplicationContext(), R.layout.movies_list_item, arrayList
             );
 
-            // TODO: CursorAdaptor Implemention
-            /*Cursor c = getActivity().getApplicationContext().getContentResolver().query(
-                    MoviesProvider.MOVIES_BASE_URI, null, null, null, null);
-            MoviesGridAdapter adapter = new MoviesGridAdapter(
-                    getActivity().getApplicationContext(), c2);*/
-
             v.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }

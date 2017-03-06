@@ -18,16 +18,10 @@ import com.facebook.stetho.okhttp3.StethoInterceptor;
 import okhttp3.OkHttpClient;
 
 public class MainActivity extends AppCompatActivity {
-// public class MainActivity extends FragmentActivity {
 
     private OkHttpClient client;
 
-    // Constants
-    // Content provider authority
     public static final String AUTHORITY = MoviesProvider.PROVIDER_NAME;
-    /*"com.example.android.datasync.provider"*/
-    // Account type
-    // public static final String ACCOUNT_TYPE = "com.example.android.datasync";
     public static final String ACCOUNT_TYPE = "com.example.ray.popularmovies.datasync";
     // Account
     public static final String ACCOUNT = "default_account";
@@ -49,15 +43,6 @@ public class MainActivity extends AppCompatActivity {
         client = new OkHttpClient.Builder()
                 .addNetworkInterceptor(new StethoInterceptor())
                 .build();
-
-        // Pass the settings flags by inserting them in a bundle
-/*        Bundle settingsBundle = new Bundle();
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_MANUAL, true);
-
-        ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);*/
 
     }
 

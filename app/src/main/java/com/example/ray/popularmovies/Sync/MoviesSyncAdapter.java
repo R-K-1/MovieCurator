@@ -107,69 +107,6 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
             jsonArrayTopRated =  jsonObjectTopRated.getJSONArray("results");
 
             arrayList.clear();
-
-
-            // TODO uncomment and fix below after implement an SQLLiteOpenHelper
-            /*MoviesProvider.DatabaseHelper y = new MoviesProvider.DatabaseHelper(getContext());
-            SQLiteDatabase db = y.getWritableDatabase();
-
-            db.execSQL("DROP TABLE IF EXISTS " +  MOVIES_TABLE_NAME);
-            db.execSQL(MoviesProvider.CREATE_MOVIES_DB_TABLE);
-
-
-            ContentValues values = new ContentValues();
-            // Bulk insert movies into database
-            for (int i =0;i<jsonArrayPopular.length(); i++) {
-                JSONObject m = jsonArrayPopular.getJSONObject(i);
-                Uri.Builder uri = new Uri.Builder();
-                uri.scheme("https")
-                        .authority("image.tmdb.org")
-                        .appendPath("t")
-                        .appendPath("p")
-                        .appendPath("w185");
-
-                values.clear();
-                values.put(MoviesProvider.MOVIE_DB_ID, m.getString("id"));
-                values.put(MoviesProvider.TITLE, m.getString("title"));
-                values.put(MoviesProvider.ORIGINAL_TITLE, m.getString("original_title"));
-                values.put(MoviesProvider.POSTER_PATH, uri.build().toString() + m.getString("poster_path"));
-                values.put(MoviesProvider.BACKDROP_PATH, m.getString("backdrop_path"));
-                values.put(MoviesProvider.OVERVIEW, m.getString("overview"));
-                values.put(MoviesProvider.RELEASE_DATE, m.getString("release_date"));
-                values.put(MoviesProvider.POPULARITY, m.getString("popularity"));
-                values.put(MoviesProvider.IS_POPULAR, 1);
-                values.put(MoviesProvider.IS_TOP_RATED, 0);
-                values.put(MoviesProvider.IS_FAVORITE, 0);
-
-                getContext().getContentResolver().insert(MoviesProvider.MOVIES_BASE_URI, values);
-            }
-
-            // Bulk insert movies into database
-            for (int i =0;i<jsonArrayTopRated.length(); i++) {
-                JSONObject m = jsonArrayTopRated.getJSONObject(i);
-                Uri.Builder uri = new Uri.Builder();
-                uri.scheme("https")
-                        .authority("image.tmdb.org")
-                        .appendPath("t")
-                        .appendPath("p")
-                        .appendPath("w185");
-
-                values.clear();
-                values.put(MoviesProvider.MOVIE_DB_ID, m.getString("id"));
-                values.put(MoviesProvider.TITLE, m.getString("title"));
-                values.put(MoviesProvider.ORIGINAL_TITLE, m.getString("original_title"));
-                values.put(MoviesProvider.POSTER_PATH, uri.build().toString() + m.getString("poster_path"));
-                values.put(MoviesProvider.BACKDROP_PATH, m.getString("backdrop_path"));
-                values.put(MoviesProvider.OVERVIEW, m.getString("overview"));
-                values.put(MoviesProvider.RELEASE_DATE, m.getString("release_date"));
-                values.put(MoviesProvider.POPULARITY, m.getString("popularity"));
-                values.put(MoviesProvider.IS_POPULAR, 0);
-                values.put(MoviesProvider.IS_TOP_RATED, 1);
-                values.put(MoviesProvider.IS_FAVORITE, 0);
-
-                getContext().getContentResolver().insert(MoviesProvider.MOVIES_BASE_URI, values);
-            }
-*/
         } catch (JSONException e) {
             e.printStackTrace();
         }
