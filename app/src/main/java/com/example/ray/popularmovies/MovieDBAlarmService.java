@@ -26,6 +26,7 @@ import okhttp3.OkHttpClient;
 
 /**
  * Created by Ray on 12/23/2016.
+ *  Periodical job retrieving database update from the MovieDB Server
  */
 
 public class MovieDBAlarmService extends IntentService {
@@ -41,7 +42,10 @@ public class MovieDBAlarmService extends IntentService {
 
         context = getApplicationContext();
 
+
         OkHttpClient x = new OkHttpClient();
+        // Creating objects to host result from two separate request since movies can be filtered
+        // using two criteria
         String responsePopular = new String();
         String responseTopRated = new String();
         try {
@@ -55,11 +59,13 @@ public class MovieDBAlarmService extends IntentService {
         }
 
         try {
+            // Converting the strings retrieved from the server into JSON arrays for easier processing
             JSONObject popularMoviesObject = new JSONObject(responsePopular);
             JSONArray popularMoviesArray = popularMoviesObject.getJSONArray("results");
             JSONObject topRatedMoviesObject = new JSONObject(responseTopRated);
             JSONArray topRatedMoviesArray = topRatedMoviesObject.getJSONArray("results");
 
+            // Preparing to store images in specific folder withing Internal Storage
             PackageManager pm = getPackageManager();
             String s = getPackageName();
             String imgDir = "";
@@ -71,6 +77,7 @@ public class MovieDBAlarmService extends IntentService {
             }
             Utils z = new Utils();
 
+            // Creating reusable URI because the MovieDB API uses similar format for images URLs
             Uri.Builder uri = new Uri.Builder();
             uri.scheme("https")
                     .authority("image.tmdb.org")
@@ -83,11 +90,16 @@ public class MovieDBAlarmService extends IntentService {
             MoviesProvider.DatabaseHelper y = new MoviesProvider.DatabaseHelper(context);
             SQLiteDatabase db = y.getWritableDatabase();
 
+            // The queries are written in a way that create statements are executed only if
+            // the tables do not already exists
             db.execSQL(MoviesProvider.CREATE_MOVIES_DB_TABLE);
             db.execSQL(MoviesProvider.CREATE_TRAILERS_DB_TABLE);
             db.execSQL(MoviesProvider.CREATE_REVIEWS_DB_TABLE);
 
             db.execSQL(MoviesProvider.DELETE_NONFAVORITE_REVIEWS);
+
+            // First deleting files and DB records associated with non favorite movies
+            // this is the simplest way to avoid duplication when persisting server updates
 
             Cursor cdt = db.rawQuery(MoviesProvider.SELECT_FILENAME_NONFAVORITE_TRAILERS, null);
             if (cdt != null && cdt.moveToFirst()) {
@@ -107,6 +119,7 @@ public class MovieDBAlarmService extends IntentService {
             }
             db.execSQL(MoviesProvider.DELETE_NONFAVORITE_MOVIES);
 
+            // Creating an array containing the IDs of favorite movies to avoid inserting duplicates
             ArrayList<String> favoriteMoviesId = new ArrayList<String>();
             Cursor cmIds = db.rawQuery(MoviesProvider.SELECT_FAVORITE_MOVIES_ID, null);
             if (cmIds != null && cmIds.moveToFirst()) {
@@ -123,6 +136,7 @@ public class MovieDBAlarmService extends IntentService {
 
                 if (!favoriteMoviesId.contains(mId)) {
 
+                    // Fetching movie reviews and trailers to later process them in a similar fashion
 
                     String responseTrailers = new String();
                     String responseReviews = new String();
