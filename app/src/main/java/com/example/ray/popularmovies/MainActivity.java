@@ -17,6 +17,13 @@ import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import okhttp3.OkHttpClient;
 
+/**
+ * An activity representing a list of Movies. This activity has different presentations for
+ * handset and tablet-size devices. On handsets, the activity presents a list of items, which when
+ * touched, lead to a {@link MovieActivity} representing item details. On tablets, this activity
+ * and the movie activity are side by side. Still touching an item launches the fragment containing
+ * the details
+ * */
 public class MainActivity extends AppCompatActivity {
 
     private OkHttpClient client;
@@ -31,15 +38,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        // Initializing debugging tools to query the database and analyze web traffic
         Stetho.initializeWithDefaults(this);
 
+        // Calling the function launching the daily job downloading server update
         scheduleAlarm();
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Initializing an http client object with debugging feature
         client = new OkHttpClient.Builder()
                 .addNetworkInterceptor(new StethoInterceptor())
                 .build();
@@ -60,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        // Menu option to order movies by popularity
         if (id == R.id.order_by_popularity) {
             MoviesGridFragment moviesGridFragment =
                     (MoviesGridFragment) getFragmentManager().findFragmentById(R.id.movies_grid_in_fragment);
@@ -68,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+        // Menu option to order movies by ratings
         if (id == R.id.order_by_ratings) {
             MoviesGridFragment moviesGridFragment =
                     (MoviesGridFragment) getFragmentManager().findFragmentById(R.id.movies_grid_in_fragment);
@@ -75,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+        // Menu option to display only users'favorite movies
         if (id == R.id.order_by_favorites) {
             MoviesGridFragment moviesGridFragment =
                     (MoviesGridFragment) getFragmentManager().findFragmentById(R.id.movies_grid_in_fragment);
@@ -85,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // function called to schedule periodic job fetching updates from server
     public void scheduleAlarm() {
         // Construct an intent that will execute the AlarmReceiver
         Intent intent = new Intent(getApplicationContext(), MovieDBAlarmReceiver.class);
