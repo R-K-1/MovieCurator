@@ -10,7 +10,7 @@ import com.example.ray.popularmovies.BuildConfig;
 
 public class RequestBuilder {
 
-    public static Uri.Builder buildGetMoviesURI(String filter) {
+    public static Uri.Builder buildGetMoviesURI(String filter, String pageNumber) {
 
         String x = filter;
         return new Uri.Builder()
@@ -20,7 +20,8 @@ public class RequestBuilder {
                 .appendPath("movie")
                 .appendPath(x)
                 .appendQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
-                .appendQueryParameter("language", "en-US");
+                .appendQueryParameter("language", "en-US")
+                .appendQueryParameter("page", pageNumber);
 
     }
 

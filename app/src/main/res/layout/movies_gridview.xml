@@ -3,8 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/movies_gridview_inside_movies_gridview"
+    android:verticalSpacing="2dp"
+    android:horizontalSpacing="0dp"
     android:gravity="center"
-    android:numColumns="2"
+    android:numColumns="4"
     android:stretchMode="columnWidth">
 
 </GridView>
