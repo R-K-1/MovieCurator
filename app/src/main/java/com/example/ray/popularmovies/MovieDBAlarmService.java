@@ -146,7 +146,7 @@ public class MovieDBAlarmService extends IntentService {
 
                 if (!favoriteMoviesId.contains(mId)) {
 
-                    // Fetching movie reviews and trailers to later process them in a similar fashion
+                    // Fetching movies reviews and trailers to later process them in a similar fashion
 
                     String responseTrailers = new String();
                     String responseReviews = new String();
